@@ -1,27 +1,22 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using PNID_Viewer.Model;
-using System.ComponentModel;
-
-//TODO: 이름바꾸기 OpenCommand로
-namespace PNID_Viewer.ViewModel.Commands
+using PNID_Viewer.ViewModel;
+namespace PNID_Viewer.ViewModel
 {
-    class OpenImageCommand : ICommand, INotifyPropertyChanged
+    class OpenXmlCommand : ICommand, INotifyPropertyChanged
     {
-        //TODO: Model 사용하기
-        //FilePath filePath { get; set; }
-
-        private string imagePath;
-        public string ImagePath
+        private string xmlPath;
+        public string XmlPath
         {
-            get { return imagePath; }
-            set { imagePath = value; OnPropertyChanged(nameof(ImagePath)); }
+            get { return XmlPath; }
+            set { XmlPath = value; OnPropertyChanged(nameof(XmlPath)); }
         }
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string name)
@@ -32,7 +27,6 @@ namespace PNID_Viewer.ViewModel.Commands
                 handler(this, new PropertyChangedEventArgs(name));
             }
         }
-
         public event EventHandler CanExecuteChanged;
 
         public bool CanExecute(object parameter)
@@ -42,10 +36,9 @@ namespace PNID_Viewer.ViewModel.Commands
 
         public void Execute(object parameter)
         {
-            //TODO: 파일탐색기 -> 원하는 사진 선택 -> 사진 띄우기
-            ImagePath = FileExplorer();
-            //MessageBox.Show(ImagePath);       //확인완료
-
+            XmlPath = FileExplorer();
+            MessageBox.Show(XmlPath);
+            
         }
         private string FileExplorer()
         {
@@ -55,6 +48,5 @@ namespace PNID_Viewer.ViewModel.Commands
             if (result == true) return dig.FileName;
             else return string.Empty;
         }
-
     }
 }

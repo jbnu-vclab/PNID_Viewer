@@ -18,7 +18,7 @@
         </Grid.RowDefinitions>
         <Menu Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Top">
             <MenuItem Header="Open">
-                <MenuItem Header="XML"/>
+                <MenuItem Header="XML" Command="{Binding Source={StaticResource OpenImage}}"/>
                 <MenuItem Header="Image" Command="{Binding Source={StaticResource OpenImage}}"/>
             </MenuItem>
         </Menu>

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+//사용 못하고 있음
 namespace PNID_Viewer.Model
 {
     class FilePath : INotifyPropertyChanged

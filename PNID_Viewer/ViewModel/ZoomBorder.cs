@@ -4,7 +4,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
-
 //https://stackoverflow.com/questions/741956/pan-zoom-image 참조
 
 namespace PNID_Viewer.ViewModel
