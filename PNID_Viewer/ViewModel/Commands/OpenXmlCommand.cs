@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using PNID_Viewer.ViewModel;
+
 namespace PNID_Viewer.ViewModel
 {
     class OpenXmlCommand : ICommand, INotifyPropertyChanged
