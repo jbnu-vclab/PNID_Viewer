@@ -12,25 +12,13 @@ using System.ComponentModel;
 //TODO: 이름바꾸기 OpenCommand로
 namespace PNID_Viewer.ViewModel.Commands
 {
-    class OpenImageCommand : ICommand, INotifyPropertyChanged
+    class OpenImageCommand : ICommand
     {
         //TODO: Model 사용하기
-        //FilePath filePath { get; set; }
-
-        private string imagePath;
-        public string ImagePath
+        public ViewerVM viewerVM { get; set; }
+        public OpenImageCommand(ViewerVM vm)
         {
-            get { return imagePath; }
-            set { imagePath = value; OnPropertyChanged(nameof(ImagePath)); }
-        }
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string name)
-        {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(name));
-            }
+            viewerVM = vm;
         }
 
         public event EventHandler CanExecuteChanged;
@@ -43,7 +31,7 @@ namespace PNID_Viewer.ViewModel.Commands
         public void Execute(object parameter)
         {
             //TODO: 파일탐색기 -> 원하는 사진 선택 -> 사진 띄우기
-            ImagePath = FileExplorer();
+            filePath.ImagePath = FileExplorer();
             //MessageBox.Show(ImagePath);       //확인완료
 
         }

@@ -8,15 +8,15 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
-namespace PNID_Viewer.ViewModel
+namespace PNID_Viewer.ViewModel.Commands
 {
     class OpenXmlCommand : ICommand, INotifyPropertyChanged
     {
         private string xmlPath;
         public string XmlPath
         {
-            get { return XmlPath; }
-            set { XmlPath = value; OnPropertyChanged(nameof(XmlPath)); }
+            get { return xmlPath; }
+            set { xmlPath = value; OnPropertyChanged(nameof(XmlPath)); }
         }
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string name)

@@ -21,9 +21,9 @@ namespace XMLReadAndParse
         {
             // Start with XmlReader object  
             //here, we try to setup Stream between the XML file nad xmlReader  
-            using (XmlReader reader = XmlReader.Create(openImageCommand.ImagePath))
+            using (XmlReader reader = XmlReader.Create(""))
             {
-                MessageBox.Show(openImageCommand.ImagePath);
+                //MessageBox.Show(openImageCommand.ImagePath);
                 while (reader.Read())
                 {
                     if (reader.IsStartElement())

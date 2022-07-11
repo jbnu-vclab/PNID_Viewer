@@ -19,8 +19,8 @@
         </Grid.RowDefinitions>
         <Menu Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Top">
             <MenuItem Header="Open">
-                <MenuItem Header="XML" Command="{Binding Source={StaticResource OpenImage}}"/>
-                <MenuItem Header="Image" Command="{Binding Source={StaticResource OpenXml}}"/>
+                <MenuItem Header="XML" Command="{Binding Source={StaticResource OpenXml}}"/>
+                <MenuItem Header="Image" Command="{Binding Source={StaticResource OpenImage}}"/>
             </MenuItem>
         </Menu>
         <Grid Grid.Row="1">
@@ -40,7 +40,7 @@
                 <Canvas x:Name="canvas">
                     <Canvas.Background>
                         <!--이미지를 imageBrush로 넣어도 될까?-->
-                        <ImageBrush ImageSource="{Binding Source={StaticResource OpenImage}, Path=ImagePath, UpdateSourceTrigger=PropertyChanged}"/>
+                        <ImageBrush ImageSource="{Binding Source={StaticResource OpenImage}, Path=filePath.ImagePath, UpdateSourceTrigger=PropertyChanged}"/>
                     </Canvas.Background>
                 </Canvas>
             </vm:ZoomBorder>

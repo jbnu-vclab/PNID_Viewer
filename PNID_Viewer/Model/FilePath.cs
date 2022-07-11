@@ -10,12 +10,24 @@ namespace PNID_Viewer.Model
 {
     class FilePath : INotifyPropertyChanged
     {
+        public FilePath()
+        {
+            ImagePath = "";
+            XmlPath = "";
+        }
         private string imagePath;
 
         public string ImagePath
         {
             get { return imagePath; }
             set { imagePath = value; OnPropertyChanged(nameof(ImagePath)); }
+        }
+
+        private string xmlPath;
+        public string XmlPath
+        {
+            get { return xmlPath; }
+            set { xmlPath = value; OnPropertyChanged(nameof(XmlPath)); }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
