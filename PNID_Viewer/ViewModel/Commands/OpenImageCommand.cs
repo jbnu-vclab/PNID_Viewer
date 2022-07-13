@@ -9,12 +9,10 @@ using System.Windows.Input;
 using PNID_Viewer.Model;
 using System.ComponentModel;
 
-//TODO: 이름바꾸기 OpenCommand로
 namespace PNID_Viewer.ViewModel.Commands
 {
     class OpenImageCommand : ICommand, INotifyPropertyChanged
     {
-        //TODO: Model 사용하기
         private string imagePath;
 
         public string ImagePath
@@ -41,10 +39,7 @@ namespace PNID_Viewer.ViewModel.Commands
 
         public void Execute(object parameter)
         {
-            //TODO: 파일탐색기 -> 원하는 사진 선택 -> 사진 띄우기
             ImagePath = FileExplorer();
-            //MessageBox.Show(ImagePath);       //확인완료
-
         }
         private string FileExplorer()
         {

@@ -12,6 +12,11 @@
         <command:OpenImageCommand x:Key="OpenImage"/>
         <vm:ViewerVM x:Key="vm"/>
     </Window.Resources>
+
+    <Window.DataContext>
+        <vm:ViewerVM/>
+    </Window.DataContext>
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -20,7 +25,7 @@
         <Menu Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Top">
             <MenuItem Header="Open">
                 <MenuItem Header="XML" Command="{Binding Source={StaticResource vm}, Path=OpenXmlCommand}"/>
-                <MenuItem Header="Image(x)"/>
+                <MenuItem Header="Image" Command="{Binding Source={StaticResource OpenImage}}"/>
             </MenuItem>
         </Menu>
         <Grid Grid.Row="1">
@@ -29,20 +34,37 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <!-- scrollviewer Auto, image stretch None-->
-<!--
-                     <ScrollViewer Grid.Column="0" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Disabled">
-                <Image Source="{Binding Source={StaticResource OpenImage}, Path=ImagePath, UpdateSourceTrigger=PropertyChanged}"
-                       Stretch="Uniform"/>
-            </ScrollViewer>   
--->
+            
             <vm:ZoomBorder x:Name="border" ClipToBounds="True" Background="Gray">
-                <Canvas x:Name="canvas">
-                    <Canvas.Background>
-                        <!--이미지를 imageBrush로 넣어도 될까?-->
-                        <ImageBrush ImageSource="{Binding Source={StaticResource OpenImage}, Path=ImagePath, UpdateSourceTrigger=PropertyChanged}"/>
-                    </Canvas.Background>
-                </Canvas>
+
+                <ItemsControl DataContext="{Binding Source={StaticResource vm}}" ItemsSource="{Binding Path=RectItems, Mode=OneWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas Height="7016" Width="9933">
+                                <Canvas.Background>
+                                    <ImageBrush ImageSource="{Binding Source={StaticResource OpenImage}, Path=ImagePath, UpdateSourceTrigger=PropertyChanged}"/>
+                                </Canvas.Background>
+                            </Canvas>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemContainerStyle>
+                        <Style TargetType="ContentPresenter">
+                            <Setter Property="Canvas.Left" Value="{Binding X}"/>
+                            <Setter Property="Canvas.Top" Value="{Binding Y}"/>
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Rectangle Width="{Binding Width}" 
+                               Height="{Binding Height}"
+                               Stroke="Blue"
+                               StrokeThickness="2"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                
+                
+               
             </vm:ZoomBorder>
             <GridSplitter Grid.Column="1" Background="LightGray" Width="5" HorizontalAlignment="Center" VerticalAlignment="Stretch" ShowsPreview="True"/>
             <Grid Grid.Column="2">

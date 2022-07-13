@@ -13,9 +13,11 @@ using System.Xml;
 
 namespace PNID_Viewer.ViewModel
 {
+
     public class ViewerVM
     {
         public XmlModel XmlModel { get; set; }
+        public RectangleModel RectangleModel { get; set; }
         public FilePathModel FilePathModel { get; set; }
 
         //TODO: ListBox에 바인딩
@@ -39,6 +41,7 @@ namespace PNID_Viewer.ViewModel
         //    }
         //}
         public OpenXmlCommand OpenXmlCommand { get; set; }
+        public ObservableCollection<RectangleModel> RectItems { get; set; }
 
         //생성자
         public ViewerVM()
@@ -48,6 +51,7 @@ namespace PNID_Viewer.ViewModel
             XmlDatas = new ObservableCollection<XmlModel>();
             XmlPathList = new ObservableCollection<string>();
             OpenXmlCommand = new OpenXmlCommand(this);
+            RectItems = new ObservableCollection<RectangleModel>();
         }
         //Xml불러오는 함수
         public void OpenXml()
@@ -78,7 +82,6 @@ namespace PNID_Viewer.ViewModel
                 //XmlNameAndPathModel.XmlPath = FilePathModel.XmlPath;
                 XmlPathList.Add(FilePathModel.XmlPath);
             }
-            //MessageBox.Show(FIlePathModel.XmlPath);       //FIlePathModel.XmlPath 값이 저장되었는지 확인 완료
             //TODO해결: XmlDatas에 같은 게 들어감 -> DataGrid문제X, 모델 깊은 복사
             string _filename = "";
             string _width = "";
@@ -87,6 +90,7 @@ namespace PNID_Viewer.ViewModel
 
             using (XmlReader reader = XmlReader.Create(FilePathModel.XmlPath))
             {
+
                 while (reader.Read())
                 {
                     if (reader.IsStartElement())
@@ -129,8 +133,8 @@ namespace PNID_Viewer.ViewModel
                                 break;
                             case "ymax":
                                 XmlModel.Ymax = Convert.ToInt32(reader.ReadString());
-                                XmlModel temp = new XmlModel();
 
+                                XmlModel temp = new XmlModel();
                                 temp.Name = XmlModel.Name;
                                 temp.Filename = XmlModel.Filename;
                                 temp.Width = XmlModel.Width;
@@ -141,7 +145,16 @@ namespace PNID_Viewer.ViewModel
                                 temp.Ymin = XmlModel.Ymin;
                                 temp.Xmax = XmlModel.Xmax;
                                 temp.Ymax = XmlModel.Ymax;
+
+                                RectangleModel temp1 = new RectangleModel();
+                                temp1.X = temp.Xmin;
+                                temp1.Y = temp.Ymin;
+                                temp1.Width = temp.Xmax - temp.Xmin;
+                                temp1.Height = temp.Ymax - temp.Ymin;
+
+                                RectItems.Add(temp1);
                                 XmlDatas.Add(temp);
+
                                 break;
                         }
                     }
