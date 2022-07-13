@@ -51,14 +51,9 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <ListBox x:Name="XmlNameListBox" Grid.Row="0" ItemsSource="{Binding Source={StaticResource vm}}">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <Label Content="{Binding Path=XmlPathList, Mode=OneWay}"/>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-                    <GridSplitter Grid.Row="1" Background="LightGray" Height="5" HorizontalAlignment="Stretch" VerticalAlignment="Center" ShowsPreview="True"/>
+                <ListView x:Name="XmlNameListBox" Grid.Row="0" ItemsSource="{Binding Source={StaticResource vm}, Path=XmlPathList, Mode=OneWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}">
+                </ListView>
+                <GridSplitter Grid.Row="1" Background="LightGray" Height="5" HorizontalAlignment="Stretch" VerticalAlignment="Center" ShowsPreview="True"/>
                 <DataGrid x:Name="XmlContentsDataGrid" Grid.Row="2" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" MaxHeight="300"
                   AutoGenerateColumns="False"  DataContext="{Binding Source={StaticResource vm}}"
                   ItemsSource="{Binding Path=XmlDatas, Mode=OneWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}">

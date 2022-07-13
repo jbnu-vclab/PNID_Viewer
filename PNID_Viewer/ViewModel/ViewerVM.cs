@@ -17,11 +17,9 @@ namespace PNID_Viewer.ViewModel
     {
         public XmlModel XmlModel { get; set; }
         public FilePathModel FilePathModel { get; set; }
-        public XmlNameAndPathModel XmlNameAndPathModel { get; set; }
 
         //TODO: ListBox에 바인딩
-        public ObservableCollection<XmlNameAndPathModel> XmlNameAndPathDatas { get; set; }
-
+        public ObservableCollection<string> XmlPathList { get; set; }
         //질문: XmlDatas가 없을 때만 객체 생성하는 것과 생성자에서 생성하는 것과 차이점은?
         public ObservableCollection<XmlModel> XmlDatas { get; set; }
         //private ObservableCollection<XmlModel> xmlDatas = null;
@@ -47,11 +45,8 @@ namespace PNID_Viewer.ViewModel
         {
             XmlModel = new XmlModel();
             FilePathModel = new FilePathModel();
-            XmlNameAndPathModel = new XmlNameAndPathModel();
-
             XmlDatas = new ObservableCollection<XmlModel>();
-            XmlNameAndPathDatas = new ObservableCollection<XmlNameAndPathModel>();
-
+            XmlPathList = new ObservableCollection<string>();
             OpenXmlCommand = new OpenXmlCommand(this);
         }
         //Xml불러오는 함수
@@ -74,12 +69,14 @@ namespace PNID_Viewer.ViewModel
                         return;
                     }
                 }
-                
-                XmlNameAndPathModel.XmlPath = FilePathModel.XmlPath;
+
+                //XmlNameAndPathModel.XmlPath = FilePathModel.XmlPath;
+                XmlPathList.Add(FilePathModel.XmlPath);
             }
             else
             {
-                XmlNameAndPathModel.XmlPath = FilePathModel.XmlPath;
+                //XmlNameAndPathModel.XmlPath = FilePathModel.XmlPath;
+                XmlPathList.Add(FilePathModel.XmlPath);
             }
             //MessageBox.Show(FIlePathModel.XmlPath);       //FIlePathModel.XmlPath 값이 저장되었는지 확인 완료
             //TODO해결: XmlDatas에 같은 게 들어감 -> DataGrid문제X, 모델 깊은 복사
