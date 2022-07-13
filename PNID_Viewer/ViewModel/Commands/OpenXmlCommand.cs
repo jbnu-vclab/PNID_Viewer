@@ -1,31 +1,25 @@
 ﻿using Microsoft.Win32;
+using PNID_Viewer.Model;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Xml;
 
 namespace PNID_Viewer.ViewModel.Commands
 {
-    class OpenXmlCommand : ICommand, INotifyPropertyChanged
+    public class OpenXmlCommand : ICommand
     {
-        private string xmlPath;
-        public string XmlPath
+        public ViewerVM VM { get; set; }
+        public OpenXmlCommand(ViewerVM vm)
         {
-            get { return xmlPath; }
-            set { xmlPath = value; OnPropertyChanged(nameof(XmlPath)); }
-        }
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string name)
-        {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(name));
-            }
+            VM = vm;
         }
         public event EventHandler CanExecuteChanged;
 
@@ -36,17 +30,10 @@ namespace PNID_Viewer.ViewModel.Commands
 
         public void Execute(object parameter)
         {
-            XmlPath = FileExplorer();
-            MessageBox.Show(XmlPath);
-            
-        }
-        private string FileExplorer()
-        {
-            OpenFileDialog dig = new OpenFileDialog();
-            bool? result = dig.ShowDialog();
-
-            if (result == true) return dig.FileName;
-            else return string.Empty;
+            //VM의 함수 호출
+            VM.OpenXml();
+            //XML 불러오기 & XML 정보 저장
+            VM.GetXmlDatas();
         }
     }
 }

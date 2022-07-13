@@ -10,7 +10,7 @@
         Title="MainWindow" Height="450" Width="800">
     <Window.Resources>
         <command:OpenImageCommand x:Key="OpenImage"/>
-        <command:OpenXmlCommand x:Key="OpenXml"/>
+        <vm:ViewerVM x:Key="vm"/>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -19,8 +19,8 @@
         </Grid.RowDefinitions>
         <Menu Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Top">
             <MenuItem Header="Open">
-                <MenuItem Header="XML" Command="{Binding Source={StaticResource OpenXml}}"/>
-                <MenuItem Header="Image" Command="{Binding Source={StaticResource OpenImage}}"/>
+                <MenuItem Header="XML" Command="{Binding Source={StaticResource vm}, Path=OpenXmlCommand}"/>
+                <MenuItem Header="Image(x)"/>
             </MenuItem>
         </Menu>
         <Grid Grid.Row="1">
@@ -40,7 +40,7 @@
                 <Canvas x:Name="canvas">
                     <Canvas.Background>
                         <!--이미지를 imageBrush로 넣어도 될까?-->
-                        <ImageBrush ImageSource="{Binding Source={StaticResource OpenImage}, Path=filePath.ImagePath, UpdateSourceTrigger=PropertyChanged}"/>
+                        <ImageBrush ImageSource="{Binding Source={StaticResource OpenImage}, Path=ImagePath, UpdateSourceTrigger=PropertyChanged}"/>
                     </Canvas.Background>
                 </Canvas>
             </vm:ZoomBorder>
@@ -51,12 +51,26 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <StackPanel Grid.Row="0">
-                    <TextBox Text="{Binding ElementName=canvas, Path=ActualHeight, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"/>
-                    <TextBox Text="{Binding ElementName=canvas, Path=ActualWidth, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"/>
-                </StackPanel>
+                <ListBox x:Name="XmlNameListBox" Grid.Row="0" ItemsSource="{Binding Source={StaticResource vm}}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Label Content="{Binding Path=XmlPathList, Mode=OneWay}"/>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
                     <GridSplitter Grid.Row="1" Background="LightGray" Height="5" HorizontalAlignment="Stretch" VerticalAlignment="Center" ShowsPreview="True"/>
-                <StackPanel Grid.Row="2"/>
+                <DataGrid x:Name="XmlContentsDataGrid" Grid.Row="2" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" MaxHeight="300"
+                  AutoGenerateColumns="False"  DataContext="{Binding Source={StaticResource vm}}"
+                  ItemsSource="{Binding Path=XmlDatas, Mode=OneWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn MinWidth="10" Width="Auto" Header="FileName" Binding="{Binding Filename}"/>
+                        <DataGridTextColumn MinWidth="10" Width="Auto" Header="Name" Binding="{Binding Name}"/>
+                        <DataGridTextColumn MinWidth="10" Width="Auto" Header="Xmin" Binding="{Binding Xmin}"/>
+                        <DataGridTextColumn MinWidth="10" Width="Auto" Header="Ymin" Binding="{Binding Ymin}"/>
+                        <DataGridTextColumn MinWidth="10" Width="Auto" Header="Xmax" Binding="{Binding Xmax}"/>
+                        <DataGridTextColumn MinWidth="10" Width="Auto" Header="Ymax" Binding="{Binding Ymax}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
             </Grid>
         </Grid>
     </Grid>
