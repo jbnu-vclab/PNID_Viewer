@@ -7,7 +7,7 @@
         xmlns:vm="clr-namespace:PNID_Viewer.ViewModel"
         xmlns:command="clr-namespace:PNID_Viewer.ViewModel.Commands"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="600" Width="900">
     <Window.Resources>
         <command:OpenImageCommand x:Key="OpenImage"/>
         <vm:ViewerVM x:Key="vm"/>
@@ -30,16 +30,16 @@
         </Menu>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="2*"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            
-            <vm:ZoomBorder x:Name="border" ClipToBounds="True" Background="Gray">
 
+            <vm:ZoomBorder x:Name="border" ClipToBounds="True" Background="Gray" >
                 <ItemsControl DataContext="{Binding Source={StaticResource vm}}" ItemsSource="{Binding Path=RectItems, Mode=OneWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
+                            <!--TODO: 캔버스 사이즈 바인딩-->
                             <Canvas Height="7016" Width="9933">
                                 <Canvas.Background>
                                     <ImageBrush ImageSource="{Binding Source={StaticResource OpenImage}, Path=ImagePath, UpdateSourceTrigger=PropertyChanged}"/>
@@ -62,9 +62,6 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-                
-                
-               
             </vm:ZoomBorder>
             <GridSplitter Grid.Column="1" Background="LightGray" Width="5" HorizontalAlignment="Center" VerticalAlignment="Stretch" ShowsPreview="True"/>
             <Grid Grid.Column="2">
@@ -73,7 +70,8 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <ListView x:Name="XmlNameListBox" Grid.Row="0" ItemsSource="{Binding Source={StaticResource vm}, Path=XmlPathList, Mode=OneWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}">
+                <ListView x:Name="XmlNameListBox" Grid.Row="0" 
+                          ItemsSource="{Binding Source={StaticResource vm}, Path=XmlPathList, Mode=OneWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}">
                 </ListView>
                 <GridSplitter Grid.Row="1" Background="LightGray" Height="5" HorizontalAlignment="Stretch" VerticalAlignment="Center" ShowsPreview="True"/>
                 <DataGrid x:Name="XmlContentsDataGrid" Grid.Row="2" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" MaxHeight="300"

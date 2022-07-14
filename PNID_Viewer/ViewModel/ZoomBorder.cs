@@ -5,7 +5,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 
 //https://stackoverflow.com/questions/741956/pan-zoom-image 참조
-
+//TODO: 큰 이미니는 줌이 덜 되는 듯함
 namespace PNID_Viewer.ViewModel
 {
     public class ZoomBorder : Border

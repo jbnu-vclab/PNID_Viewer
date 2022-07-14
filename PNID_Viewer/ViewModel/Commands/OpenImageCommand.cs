@@ -41,6 +41,7 @@ namespace PNID_Viewer.ViewModel.Commands
         {
             ImagePath = FileExplorer();
         }
+
         private string FileExplorer()
         {
             OpenFileDialog dig = new OpenFileDialog();

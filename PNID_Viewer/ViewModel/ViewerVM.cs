@@ -20,7 +20,8 @@ namespace PNID_Viewer.ViewModel
         public RectangleModel RectangleModel { get; set; }
         public FilePathModel FilePathModel { get; set; }
 
-        //TODO: ListBox에 바인딩
+        //질문: ObservableCollection<Model> 1개 만들기 vs ObservableCollection<int> 여러 개 만들기
+        //TODO해결: ListBox에 바인딩
         public ObservableCollection<string> XmlPathList { get; set; }
         //질문: XmlDatas가 없을 때만 객체 생성하는 것과 생성자에서 생성하는 것과 차이점은?
         public ObservableCollection<XmlModel> XmlDatas { get; set; }
@@ -50,8 +51,8 @@ namespace PNID_Viewer.ViewModel
             FilePathModel = new FilePathModel();
             XmlDatas = new ObservableCollection<XmlModel>();
             XmlPathList = new ObservableCollection<string>();
-            OpenXmlCommand = new OpenXmlCommand(this);
             RectItems = new ObservableCollection<RectangleModel>();
+            OpenXmlCommand = new OpenXmlCommand(this);
         }
         //Xml불러오는 함수
         public void OpenXml()
@@ -61,6 +62,14 @@ namespace PNID_Viewer.ViewModel
 
         public void GetXmlDatas()
         {
+            //TODO해결: xml파일만 진행되게(빈파일도 X)
+            if (String.IsNullOrEmpty(FilePathModel.XmlPath) || (FilePathModel.XmlPath.Length <= 3)) return;
+            else
+            {
+                string CheckXmlFile = FilePathModel.XmlPath.Substring(FilePathModel.XmlPath.Length - 3, 3);
+                if (!CheckXmlFile.Equals("xml")) return;
+            }
+
             //TODO해결: 이미 열린 파일의 경우 XmlDatas에 추가하지 않기(메세지 띄우기)
             //주의) 같은 파일이더라도 경로가 달라지면 다른 파일로 인지함
             if (XmlPathList.Count != 0)
@@ -82,15 +91,20 @@ namespace PNID_Viewer.ViewModel
                 //XmlNameAndPathModel.XmlPath = FilePathModel.XmlPath;
                 XmlPathList.Add(FilePathModel.XmlPath);
             }
+
+            ReadXml(FilePathModel.XmlPath);
+
+
+        }
+        private void ReadXml(string filePath)
+        {
             //TODO해결: XmlDatas에 같은 게 들어감 -> DataGrid문제X, 모델 깊은 복사
             string _filename = "";
             string _width = "";
             string _height = "";
             string _depth = "";
-
-            using (XmlReader reader = XmlReader.Create(FilePathModel.XmlPath))
+            using (XmlReader reader = XmlReader.Create(filePath))
             {
-
                 while (reader.Read())
                 {
                     if (reader.IsStartElement())
@@ -118,6 +132,7 @@ namespace PNID_Viewer.ViewModel
                                 XmlModel.Width = Convert.ToInt32(_width);
                                 XmlModel.Height = Convert.ToInt32(_height);
                                 XmlModel.Depth = Convert.ToInt32(_depth);
+
                                 break;
                             case "degree":
                                 XmlModel.Degree = Convert.ToDouble(reader.ReadString());
@@ -161,7 +176,6 @@ namespace PNID_Viewer.ViewModel
                 }
             }
         }
-
         private string FileExplorer()
         {
             OpenFileDialog dig = new OpenFileDialog();

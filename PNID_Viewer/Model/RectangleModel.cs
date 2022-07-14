@@ -9,6 +9,7 @@ namespace PNID_Viewer.Model
 {
     public class RectangleModel : INotifyPropertyChanged
     {
+
         private string name;
         public string Name
         {
