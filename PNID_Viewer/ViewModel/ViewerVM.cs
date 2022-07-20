@@ -23,12 +23,12 @@ namespace PNID_Viewer.ViewModel
         //질문: ObservableCollection<Model> 1개 만들기 vs ObservableCollection<int> 여러 개 만들기
         //TODO해결: ListBox에 바인딩
         public ObservableCollection<string> XmlPathList { get; set; }
-        //질문: XmlDatas가 없을 때만 객체 생성하는 것과 생성자에서 생성하는 것과 차이점은?
+        //질문: XmlDatas가 없을 때만 객체 생성하는 것과 생성자에서 생성하는 것과 차이점은? 초기화 시점의 차이
         public ObservableCollection<XmlModel> XmlDatas { get; set; }
         //private ObservableCollection<XmlModel> xmlDatas = null;
         //public ObservableCollection<XmlModel> XmlDatas
         //{
-        //    get
+        //    get       //get 호출시 객체 생성
         //    {
         //        if (xmlDatas == null)
         //        {
