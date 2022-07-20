@@ -21,6 +21,7 @@ namespace PNID_Viewer.ViewModel.Commands
             set { imagePath = value; OnPropertyChanged(nameof(ImagePath)); }
         }
         public event PropertyChangedEventHandler PropertyChanged;
+
         protected void OnPropertyChanged(string name)
         {
             PropertyChangedEventHandler handler = PropertyChanged;
@@ -41,6 +42,7 @@ namespace PNID_Viewer.ViewModel.Commands
         {
             ImagePath = FileExplorer();
         }
+
         private string FileExplorer()
         {
             OpenFileDialog dig = new OpenFileDialog();

@@ -58,8 +58,10 @@
     <Compile Include="Model\FilePathModel.cs" />
     <Compile Include="Model\RectangleModel.cs" />
     <Compile Include="Model\XmlModel.cs" />
+    <Compile Include="ViewModel\Commands\MouseDoubleClick.cs" />
     <Compile Include="ViewModel\Commands\OpenImageCommand.cs" />
     <Compile Include="ViewModel\Commands\OpenXmlCommand.cs" />
+    <Compile Include="ViewModel\Commands\WriteXmlCommand.cs" />
     <Compile Include="ViewModel\ViewerVM.cs" />
     <Compile Include="ViewModel\ZoomBorder.cs" />
     <Page Include="View\MainWindow.xaml">

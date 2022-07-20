@@ -10,12 +10,12 @@ namespace PNID_Viewer.Model
     public class FilePathModel : INotifyPropertyChanged
     {
         private string xmlPath;
-
         public string XmlPath
         {
             get { return xmlPath; }
             set { xmlPath = value; OnPropertyChanged(nameof(XmlPath)); }
         }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnPropertyChanged(string propertyName)

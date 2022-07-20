@@ -83,8 +83,8 @@ namespace PNID_Viewer.ViewModel
                 var st = GetScaleTransform(child);
                 var tt = GetTranslateTransform(child);
 
-                double zoom = e.Delta > 0 ? .2 : -.2;
-                if (!(e.Delta > 0) && (st.ScaleX < .4 || st.ScaleY < .4))
+                double zoom = e.Delta > 0 ? .05 : -.05;
+                if (!(e.Delta > 0) && (st.ScaleX <= .15 || st.ScaleY <= .15))
                     return;
 
                 Point relative = e.GetPosition(child);
@@ -141,6 +141,17 @@ namespace PNID_Viewer.ViewModel
                 }
             }
         }
+        /*
+        void child_DataClicked(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (child != null)
+            {
+                var tt = GetTranslateTransform(child);
+                tt.X = origin.X;
+                tt.Y = origin.Y;
+            }
+        }
+        */
 
         #endregion
     }
