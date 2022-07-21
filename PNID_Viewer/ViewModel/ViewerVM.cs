@@ -127,7 +127,6 @@ namespace PNID_Viewer.ViewModel
                                 break;
                             case "name":
                                 XmlModel.Name = reader.ReadString();
-
                                 XmlModel.Filename = _filename;
                                 XmlModel.Width = Convert.ToInt32(_width);
                                 XmlModel.Height = Convert.ToInt32(_height);
