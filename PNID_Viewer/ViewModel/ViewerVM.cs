@@ -223,21 +223,45 @@ namespace PNID_Viewer.ViewModel
         }
         public void WriteXml()
         {
-            //using (XmlWriter wr = XmlWriter.Create(CreateFile()))
-            //{
-            //    wr.WriteStartDocument();
-            //    wr.WriteStartElement("annotation");
-            //    wr.WriteElementString("filmename", XmlDatas. + "_edited");
-
-            //    wr.WriteStartElement("size");
-            //    wr.WriteElementString("width", XmlDatas[].ToString());   // 수정 要 : 데이터를 받아올 곳이 필요함
-            //    wr.WriteElementString("height", XmlDatas.Height.ToString());
-            //    wr.WriteElementString("depth", XmlDatas.Depth.ToString());
-            //    wr.WriteEndElement();
-
-            //    wr.WriteEndElement();
-            //    wr.WriteEndDocument();
-            //}
+            string dir = CreateFile();
+            //TODO: 파일 이름 정하기
+            string fname =  "filename"+ "_edited.xml";
+            string strXMLPath = Path.Combine(dir, fname);
+            XmlWriterSettings settings = new XmlWriterSettings
+            {
+                Indent = true,
+                IndentChars = "  ",
+                NewLineChars = "\r\n",
+                NewLineHandling = NewLineHandling.Replace,
+                OmitXmlDeclaration = false
+            };
+            using (XmlWriter wr = XmlWriter.Create(strXMLPath, settings))
+            {
+                wr.WriteStartDocument();
+                wr.WriteStartElement("annotation");
+                //TODO: CheckedXmlDatas에 1개의 xml정보만 들어와있어야함
+                wr.WriteElementString("filmename", CheckedXmlDatas[0].Filename);
+                wr.WriteStartElement("size");
+                wr.WriteElementString("width", CheckedXmlDatas[0].Width.ToString());
+                wr.WriteElementString("height", CheckedXmlDatas[0].Height.ToString());
+                wr.WriteElementString("depth", CheckedXmlDatas[0].Depth.ToString());
+                wr.WriteEndElement();  //size
+                foreach (var item in CheckedXmlDatas)
+                {
+                    wr.WriteStartElement("object");
+                    wr.WriteElementString("name", item.Name.ToString());
+                    wr.WriteElementString("degree", item.Degree.ToString());
+                    wr.WriteStartElement("bndbox");
+                    wr.WriteElementString("xmin", item.Xmin.ToString());
+                    wr.WriteElementString("ymin", item.Ymin.ToString());
+                    wr.WriteElementString("xmax", item.Xmax.ToString());
+                    wr.WriteElementString("ymax", item.Ymax.ToString());
+                    wr.WriteEndElement();  //bndbox
+                    wr.WriteEndElement();  //object
+                }
+                wr.WriteEndElement();  //annotation
+                wr.WriteEndDocument();
+            }
         }
         //주의)이 함수는 xml 불러올 떄만 사용됨. image불러오는 함수는 OpenImageCommand에서 작성됨.
         private string FileExplorer()

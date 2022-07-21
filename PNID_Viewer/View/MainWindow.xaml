@@ -93,7 +93,6 @@
                   AutoGenerateColumns="False"  DataContext="{Binding Source={StaticResource vm}}"
                   ItemsSource="{Binding Path=CheckedXmlDatas}">
                     <DataGrid.Columns>
-                        <DataGridTextColumn MinWidth="10" Width="Auto" Header="XmlName" Binding="{Binding XmlFilename, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"/>
                         <DataGridTextColumn MinWidth="10" Width="Auto" Header="Name" Binding="{Binding Name, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"/>
                         <DataGridTextColumn MinWidth="10" Width="Auto" Header="Degree" Binding="{Binding Degree, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"/>
                         <DataGridTextColumn MinWidth="10" Width="Auto" Header="Xmin" Binding="{Binding Xmin, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"/>
