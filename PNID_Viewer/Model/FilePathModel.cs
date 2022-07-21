@@ -15,6 +15,13 @@ namespace PNID_Viewer.Model
             get { return xmlPath; }
             set { xmlPath = value; OnPropertyChanged(nameof(XmlPath)); }
         }
+        private string xmlFileName;
+
+        public string XmlFileName
+        {
+            get { return xmlFileName; }
+            set { xmlFileName = value; }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

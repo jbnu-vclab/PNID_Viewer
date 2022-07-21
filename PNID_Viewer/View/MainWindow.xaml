@@ -12,7 +12,6 @@
         Title="MainWindow" Height="480" Width="800">
     <Window.Resources>
         <command:OpenImageCommand x:Key="OpenImage"/>
-        <command:WriteXmlCommand x:Key="WriteXml"/>
         <vm:ViewerVM x:Key="vm"/>
     </Window.Resources>
     <Window.DataContext>
@@ -26,10 +25,12 @@
         </Grid.RowDefinitions>
         
         <Menu Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Top">
-            <MenuItem Header="Open">
-                <MenuItem Header="writeXML" Command="{Binding Source={StaticResource WriteXml}}"/>
+            <MenuItem Header="열기">
                 <MenuItem Header="XML" Command="{Binding Source={StaticResource vm}, Path=OpenXmlCommand}"/>
                 <MenuItem Header="Image" Command="{Binding Source={StaticResource OpenImage}}"/>
+            </MenuItem>
+            <MenuItem Header="내보내기">
+                <MenuItem Header="XML" Command="{Binding Source={StaticResource vm}, Path=WriteXmlCommand}"/>
             </MenuItem>
         </Menu>
         
@@ -41,7 +42,7 @@
             </Grid.ColumnDefinitions>
 
             <vm:ZoomBorder x:Name="border" ClipToBounds="True" Background="Gray" >
-                <ItemsControl DataContext="{Binding Source={StaticResource vm}}" ItemsSource="{Binding Path=RectItems, Mode=OneWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}">
+                <ItemsControl DataContext="{Binding Source={StaticResource vm}}" ItemsSource="{Binding Path=CheckedRectItems, Mode=OneWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <!--TODO: 캔버스 사이즈 바인딩-->
@@ -78,16 +79,21 @@
                 </Grid.RowDefinitions>
 
                 <ListView x:Name="XmlNameListBox" Grid.Row="0" 
-                          ItemsSource="{Binding Source={StaticResource vm}, Path=XmlPathList, Mode=OneWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}">
+                          ItemsSource="{Binding Source={StaticResource vm}, Path=XmlFileNameList, Mode=OneWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <CheckBox Content="{Binding}" Command="{Binding Source={StaticResource vm}, Path=IsCheckedCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
                 </ListView>
                 
                 <GridSplitter Grid.Row="1" Background="LightGray" Height="5" HorizontalAlignment="Stretch" VerticalAlignment="Center" ShowsPreview="True"/>
 
                 <DataGrid x:Name="XmlContentsDataGrid" Grid.Row="2" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" MaxHeight="300"
                   AutoGenerateColumns="False"  DataContext="{Binding Source={StaticResource vm}}"
-                  ItemsSource="{Binding Path=XmlDatas}">
+                  ItemsSource="{Binding Path=CheckedXmlDatas}">
                     <DataGrid.Columns>
-                        <DataGridTextColumn MinWidth="10" Width="Auto" Header="FileName" Binding="{Binding Filename, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"/>
+                        <DataGridTextColumn MinWidth="10" Width="Auto" Header="XmlName" Binding="{Binding XmlFilename, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"/>
                         <DataGridTextColumn MinWidth="10" Width="Auto" Header="Name" Binding="{Binding Name, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"/>
                         <DataGridTextColumn MinWidth="10" Width="Auto" Header="Degree" Binding="{Binding Degree, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"/>
                         <DataGridTextColumn MinWidth="10" Width="Auto" Header="Xmin" Binding="{Binding Xmin, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"/>

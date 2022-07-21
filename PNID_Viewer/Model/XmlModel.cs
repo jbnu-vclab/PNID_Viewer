@@ -10,6 +10,15 @@ namespace PNID_Viewer.Model
 
     public class XmlModel : INotifyPropertyChanged
     {
+        private string xmlFilename;
+
+        public string XmlFilename
+        {
+            get { return xmlFilename; }
+            set { xmlFilename = value; OnPropertyChanged(nameof(XmlFilename)); }
+        }
+
+
         private string filename;
         public string Filename
         {

@@ -9,6 +9,14 @@ namespace PNID_Viewer.Model
 {
     public class RectangleModel : INotifyPropertyChanged
     {
+        private string xmlFilename;
+
+        public string XmlFilename
+        {
+            get { return xmlFilename; }
+            set { xmlFilename = value; OnPropertyChanged(nameof(XmlFilename)); }
+        }
+
 
         private string name;
         public string Name

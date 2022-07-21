@@ -46,6 +46,7 @@ namespace PNID_Viewer.ViewModel.Commands
         private string FileExplorer()
         {
             OpenFileDialog dig = new OpenFileDialog();
+            dig.Filter = "Image Files(*.BMP;*.JPG;*.GIF)|*.BMP;*.JPG;*.GIF|All files (*.*)|*.*";
             bool? result = dig.ShowDialog();
 
             if (result == true) return dig.FileName;

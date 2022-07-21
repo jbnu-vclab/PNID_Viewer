@@ -61,6 +61,7 @@
     <Compile Include="Model\ImageSizeModel.cs" />
     <Compile Include="Model\RectangleModel.cs" />
     <Compile Include="Model\XmlModel.cs" />
+    <Compile Include="ViewModel\Commands\IsCheckedCommand.cs" />
     <Compile Include="ViewModel\Commands\MouseDoubleClick.cs" />
     <Compile Include="ViewModel\Commands\OpenImageCommand.cs" />
     <Compile Include="ViewModel\Commands\OpenXmlCommand.cs" />
