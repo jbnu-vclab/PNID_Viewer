@@ -89,6 +89,23 @@ namespace PNID_Viewer.Model
             set { ymax = value; OnPropertyChanged(nameof(Ymax)); }
         }
 
+        private int rectangleWidth;
+
+        public int RectangleWidth
+        {
+            get { return rectangleWidth; }
+            set { rectangleWidth = value; OnPropertyChanged(nameof(RectangleWidth)); }
+        }
+
+        private int rectangleHeight;
+
+        public int RectangleHeight
+        {
+            get { return rectangleHeight; }
+            set { rectangleHeight = value; OnPropertyChanged(nameof(RectangleHeight)); }
+        }
+
+
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -97,6 +114,13 @@ namespace PNID_Viewer.Model
             if (PropertyChanged != null)
             {
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+                //질문 : 요소가 변화했을 때 
+                if(propertyName.Equals("Xmin") || propertyName.Equals("Ymin") || 
+                    propertyName.Equals("Xmax") || propertyName.Equals("Ymax"))
+                {
+                    RectangleWidth = Xmax - Xmin;
+                    RectangleHeight = Ymax - Ymin;
+                }
             }
         }
     }

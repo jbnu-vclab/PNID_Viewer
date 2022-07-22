@@ -9,7 +9,7 @@
         xmlns:vm="clr-namespace:PNID_Viewer.ViewModel"
         xmlns:command="clr-namespace:PNID_Viewer.ViewModel.Commands"
         mc:Ignorable="d"
-        Title="MainWindow" Height="480" Width="800">
+        Title="MainWindow" Height="700" Width="1000">
     <Window.Resources>
         <command:OpenImageCommand x:Key="OpenImage"/>
         <vm:ViewerVM x:Key="vm"/>
@@ -17,13 +17,13 @@
     <Window.DataContext>
         <vm:ViewerVM/>
     </Window.DataContext>
-    
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        
+
         <Menu Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Top">
             <MenuItem Header="열기">
                 <MenuItem Header="XML" Command="{Binding Source={StaticResource vm}, Path=OpenXmlCommand}"/>
@@ -33,16 +33,16 @@
                 <MenuItem Header="XML" Command="{Binding Source={StaticResource vm}, Path=WriteXmlCommand}"/>
             </MenuItem>
         </Menu>
-        
+
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="1.5*"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
             <vm:ZoomBorder x:Name="border" ClipToBounds="True" Background="Gray" >
-                <ItemsControl DataContext="{Binding Source={StaticResource vm}}" ItemsSource="{Binding Path=CheckedRectItems, Mode=OneWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}">
+                <ItemsControl DataContext="{Binding Source={StaticResource vm}}" ItemsSource="{Binding Path=CheckedXmlDatas, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <!--TODO: 캔버스 사이즈 바인딩-->
@@ -56,26 +56,26 @@
 
                     <ItemsControl.ItemContainerStyle>
                         <Style TargetType="ContentPresenter">
-                            <Setter Property="Canvas.Left" Value="{Binding X}"/>
-                            <Setter Property="Canvas.Top" Value="{Binding Y}"/>
+                            <Setter Property="Canvas.Left" Value="{Binding Xmin}"/>
+                            <Setter Property="Canvas.Top" Value="{Binding Ymin}"/>
                         </Style>
                     </ItemsControl.ItemContainerStyle>
 
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Rectangle Width="{Binding Width}" Height="{Binding Height}" Stroke="Red" StrokeThickness="2"/>
+                            <Rectangle Width="{Binding RectangleWidth}" Height="{Binding RectangleHeight}" Stroke="Red" StrokeThickness="2"/>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
             </vm:ZoomBorder>
-            
+
             <GridSplitter Grid.Column="1" Background="LightGray" Width="5" HorizontalAlignment="Center" VerticalAlignment="Stretch" ShowsPreview="True"/>
-            
+
             <Grid Grid.Column="2">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="4*"/>
                 </Grid.RowDefinitions>
 
                 <ListView x:Name="XmlNameListBox" Grid.Row="0" 
@@ -86,22 +86,24 @@
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
-                
+
                 <GridSplitter Grid.Row="1" Background="LightGray" Height="5" HorizontalAlignment="Stretch" VerticalAlignment="Center" ShowsPreview="True"/>
 
-                <DataGrid x:Name="XmlContentsDataGrid" Grid.Row="2" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" MaxHeight="300"
+                <DataGrid x:Name="XmlContentsDataGrid" Grid.Row="2" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto"
                   AutoGenerateColumns="False"  DataContext="{Binding Source={StaticResource vm}}"
-                  ItemsSource="{Binding Path=CheckedXmlDatas}">
+                  ItemsSource="{Binding Path=CheckedXmlDatas, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
+                          
+                          CanUserAddRows="True" CanUserDeleteRows="True">
                     <DataGrid.Columns>
-                        <DataGridTextColumn MinWidth="10" Width="Auto" Header="Name" Binding="{Binding Name, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"/>
-                        <DataGridTextColumn MinWidth="10" Width="Auto" Header="Degree" Binding="{Binding Degree, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"/>
-                        <DataGridTextColumn MinWidth="10" Width="Auto" Header="Xmin" Binding="{Binding Xmin, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"/>
-                        <DataGridTextColumn MinWidth="10" Width="Auto" Header="Ymin" Binding="{Binding Ymin, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"/>
-                        <DataGridTextColumn MinWidth="10" Width="Auto" Header="Xmax" Binding="{Binding Xmax, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"/>
-                        <DataGridTextColumn MinWidth="10" Width="Auto" Header="Ymax" Binding="{Binding Ymax, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"/>
+                        <DataGridTextColumn MinWidth="10" Width="Auto" Header="Name" Binding="{Binding Name}"/>
+                        <DataGridTextColumn MinWidth="10" Width="Auto" Header="Degree" Binding="{Binding Degree}"/>
+                        <DataGridTextColumn MinWidth="10" Width="Auto" Header="Xmin" Binding="{Binding Xmin}"/>
+                        <DataGridTextColumn MinWidth="10" Width="Auto" Header="Ymin" Binding="{Binding Ymin}"/>
+                        <DataGridTextColumn MinWidth="10" Width="Auto" Header="Xmax" Binding="{Binding Xmax}"/>
+                        <DataGridTextColumn MinWidth="10" Width="Auto" Header="Ymax" Binding="{Binding Ymax}"/>
                     </DataGrid.Columns>
                 </DataGrid>
-                
+
             </Grid>
         </Grid>
     </Grid>

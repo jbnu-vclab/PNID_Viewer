@@ -4,6 +4,7 @@ using PNID_Viewer.ViewModel.Commands;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -18,17 +19,17 @@ namespace PNID_Viewer.ViewModel
     public class ViewerVM
     {
         public XmlModel XmlModel { get; set; }
-        public RectangleModel RectangleModel { get; set; }
         public FilePathModel FilePathModel { get; set; }
 
+        //XmlPathList는 이미 열린 파일인지 확인을 위한 것, XmlFileNameList은 리스트에 바인딩하기 위한 것
         public BindingList<string> XmlPathList { get; set; }
         public ObservableCollection<string> XmlFileNameList { get; set; }
 
+        //파일을 열면 XmlDatas에 전부 추가됨, 리스트에서 체크된 파일만 CheckedXmlDatas에 추가되어 화면에 보임
         public ObservableCollection<XmlModel> XmlDatas { get; set; }
         public ObservableCollection<XmlModel> CheckedXmlDatas { get; set; }
-        public ObservableCollection<RectangleModel> RectItems { get; set; }
-        public ObservableCollection<RectangleModel> CheckedRectItems { get; set; }
 
+        //순서대로 xml을 열고, xml파일을 내보내고, 리스트 체크 여부를 알기 위한 것
         public OpenXmlCommand OpenXmlCommand { get; set; }
         public WriteXmlCommand WriteXmlCommand { get; set; }
         public IsCheckedCommand IsCheckedCommand { get; set; }
@@ -38,71 +39,84 @@ namespace PNID_Viewer.ViewModel
         {
             XmlModel = new XmlModel();
             FilePathModel = new FilePathModel();
-            RectangleModel = new RectangleModel();
 
             XmlPathList = new BindingList<string>();
             XmlFileNameList = new ObservableCollection<string>();
 
             XmlDatas = new ObservableCollection<XmlModel>();
             CheckedXmlDatas = new ObservableCollection<XmlModel>();
-            RectItems = new ObservableCollection<RectangleModel>();
-            CheckedRectItems = new ObservableCollection<RectangleModel>();
+            CheckedXmlDatas.CollectionChanged += this.OnCollectionChanged;
 
             OpenXmlCommand = new OpenXmlCommand(this);
             WriteXmlCommand = new WriteXmlCommand(this);
             IsCheckedCommand = new IsCheckedCommand(this);
         }
-        //ObservableCollection<XmlModel>에 추가하는 함수
+
+        //CheckedXmlDatas의 변화
+        private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            //행 추가할 때
+            if(e.Action == NotifyCollectionChangedAction.Add)
+            {
+                //Default Value
+                //질문: XmlModel의 객체를 생성자에서 1번만 만들기
+                // vs 사용할 때마다(메소드 안에서) 생성
+                //주의)xml이 1개만 체크되어있어야함
+                //XmlModel.XmlFilename = CheckedXmlDatas[0].XmlFilename;
+                //XmlModel.Name = "";
+                //XmlModel.Filename = CheckedXmlDatas[0].Filename;
+                //XmlModel.Width = CheckedXmlDatas[0].Width;
+                //XmlModel.Height = CheckedXmlDatas[0].Height;
+                //XmlModel.Depth = CheckedXmlDatas[0].Depth;
+                //XmlModel.Degree = 0;
+                //XmlModel.Xmin = 0;
+                //XmlModel.Ymin = 0;
+                //XmlModel.Xmax = 0;
+                //XmlModel.Ymax = 0;
+                //XmlModel.RectangleWidth = 0;
+                //XmlModel.RectangleHeight = 0;
+                //CheckedXmlDatas.Add(XmlModel);        //이벤트 실행 중에 변경 불가
+            }
+            //행 삭제할 때
+            if (e.Action == NotifyCollectionChangedAction.Remove)
+            {
+                //XmlDatas에 변화 전달
+            }
+        }
+
+        //XmlDatas에서 원하는 정보만을 CheckedXmlDatas에 추가/제거하는 함수
+        //IsCheckedCommand에서 사용
         public void AddData(string _XmlFileName)
         {
-            //TODO: 요소의 개수가 0일떄 오류 안나는지 확인
+            //TODO: 다시체크할 때 수정사항 반영 안 됨 -> XmlDatas에 반영
             foreach (var item in XmlDatas)
             {
                 if (item.XmlFilename.Equals(_XmlFileName))
                 {
-                    //TODO: 깊은복사 안해도 되는지 확인
                     CheckedXmlDatas.Add(item);
                 }
             }
-            foreach (var item in RectItems)
-            {
-                if (item.XmlFilename.Equals(_XmlFileName))
-                {
-                    CheckedRectItems.Add(item);
-                }
-            }
 
         }
-
-        //ObservableCollection<XmlModel>에서 제거하는 함수
         public void DeleteData(string _XmlFileName)
         {
-            //TODO: 요소의 개수가 0일떄 오류 안나는지 확인
             foreach (var item in XmlDatas)
             {
                 if (item.XmlFilename.Equals(_XmlFileName))
                 {
-                    //TODO: 깊은복사 안해도 되는지 확인
                     CheckedXmlDatas.Remove(item);
-
-                }
-            }
-            foreach (var item in RectItems)
-            {
-                if (item.XmlFilename.Equals(_XmlFileName))
-                {
-                    CheckedRectItems.Remove(item);
                 }
             }
         }
-        //Xml 경로 불러오는 함수
+
+        //Xml의 경로를 불러옴
         public void OpenXml()
         {
             FilePathModel.XmlPath = FileExplorer();
         }
         public void GetXmlDatas()
         {
-            //TODO해결: xml파일만 진행되게(빈파일도 X)
+            //xml파일만 진행됨(빈파일도 X)
             if (String.IsNullOrEmpty(FilePathModel.XmlPath) || (FilePathModel.XmlPath.Length <= 3)) return;
             else
             {
@@ -110,7 +124,6 @@ namespace PNID_Viewer.ViewModel
                 if (!CheckXmlFile.Equals("xml")) return;
             }
 
-            //TODO해결: 이미 열린 파일의 경우 XmlDatas에 추가하지 않기(메세지 띄우기)
             //주의) 같은 파일이더라도 경로가 달라지면 다른 파일로 인지함
             if (XmlPathList.Count != 0)
             {
@@ -136,6 +149,7 @@ namespace PNID_Viewer.ViewModel
 
 
         }
+        //Xml의 정보를 읽음
         private void ReadXml(string filePath)
         {
             //TODO해결: XmlDatas에 같은 게 들어감 -> DataGrid문제X, 모델 깊은 복사
@@ -190,6 +204,9 @@ namespace PNID_Viewer.ViewModel
                             case "ymax":
                                 XmlModel.Ymax = Convert.ToInt32(reader.ReadString());
 
+                                XmlModel.RectangleWidth = XmlModel.Xmax - XmlModel.Xmin;
+                                XmlModel.RectangleHeight = XmlModel.Ymax - XmlModel.Ymin;
+
                                 XmlModel temp = new XmlModel();
                                 temp.XmlFilename = XmlModel.XmlFilename;
                                 temp.Name = XmlModel.Name;
@@ -202,19 +219,10 @@ namespace PNID_Viewer.ViewModel
                                 temp.Ymin = XmlModel.Ymin;
                                 temp.Xmax = XmlModel.Xmax;
                                 temp.Ymax = XmlModel.Ymax;
+                                temp.RectangleWidth = XmlModel.RectangleWidth;
+                                temp.RectangleHeight = XmlModel.RectangleHeight;
 
                                 XmlDatas.Add(temp);
-
-                                RectangleModel temp1 = new RectangleModel();
-                                temp1.XmlFilename = temp.XmlFilename;
-                                temp1.Name = temp.Name;
-                                temp1.X = temp.Xmin;
-                                temp1.Y = temp.Ymin;
-                                temp1.Width = temp.Xmax - temp.Xmin;
-                                temp1.Height = temp.Ymax - temp.Ymin;
-
-                                RectItems.Add(temp1);
-
                                 break;
                         }
                     }
@@ -225,7 +233,8 @@ namespace PNID_Viewer.ViewModel
         {
             string dir = CreateFile();
             //TODO: 파일 이름 정하기
-            string fname =  "filename"+ "_edited.xml";
+            //주의) 1개만 체크되어있어야함.
+            string fname = CheckedXmlDatas[0].XmlFilename+ "_edited.xml";
             string strXMLPath = Path.Combine(dir, fname);
             XmlWriterSettings settings = new XmlWriterSettings
             {
@@ -263,6 +272,7 @@ namespace PNID_Viewer.ViewModel
                 wr.WriteEndDocument();
             }
         }
+
         //주의)이 함수는 xml 불러올 떄만 사용됨. image불러오는 함수는 OpenImageCommand에서 작성됨.
         private string FileExplorer()
         {
@@ -273,6 +283,8 @@ namespace PNID_Viewer.ViewModel
             if (result == true) return dig.FileName;
             else return string.Empty;
         }
+
+        //Xml을 내보낼 때 파일 생성
         private string CreateFile()
         {
             string path = @"C:\Edited_Xmls";
