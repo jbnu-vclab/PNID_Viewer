@@ -75,6 +75,7 @@ namespace PNID_Viewer.ViewModel
                 //XmlModel.Ymax = 0;
                 //XmlModel.RectangleWidth = 0;
                 //XmlModel.RectangleHeight = 0;
+
                 //CheckedXmlDatas.Add(XmlModel);        //이벤트 실행 중에 변경 불가
             }
             //행 삭제할 때
