@@ -5,6 +5,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity" 
+        xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions" 
         xmlns:local="clr-namespace:PNID_Viewer"
         xmlns:vm="clr-namespace:PNID_Viewer.ViewModel"
         xmlns:command="clr-namespace:PNID_Viewer.ViewModel.Commands"
@@ -41,12 +43,15 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
+
+
             <vm:ZoomBorder x:Name="border" ClipToBounds="True" Background="Gray" >
                 <ItemsControl DataContext="{Binding Source={StaticResource vm}}" ItemsSource="{Binding Path=CheckedXmlDatas, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <!--TODO: 캔버스 사이즈 바인딩-->
-                            <Canvas MinHeight="1000" MinWidth="1000" Height="7016" Width="9933">
+                            <Canvas MinHeight="1000" MinWidth="1000" Height="7016" Width="9933" >
+
                                 <Canvas.Background>
                                     <ImageBrush ImageSource="{Binding Source={StaticResource OpenImage}, Path=ImagePath, UpdateSourceTrigger=PropertyChanged}"/>
                                 </Canvas.Background>

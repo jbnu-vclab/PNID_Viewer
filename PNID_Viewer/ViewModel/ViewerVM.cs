@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using System.Xml;
 
 namespace PNID_Viewer.ViewModel
@@ -307,5 +308,7 @@ namespace PNID_Viewer.ViewModel
             string lastWord = words[words.Length - 1];
             return lastWord;
         }
+
+       
     }
 }
