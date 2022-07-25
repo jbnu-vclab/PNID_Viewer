@@ -128,7 +128,6 @@ namespace PNID_Viewer.ViewModel
 
         void child_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-            this.Reset();
         }
 
         private void child_MouseMove(object sender, MouseEventArgs e)
