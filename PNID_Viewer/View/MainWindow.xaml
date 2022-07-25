@@ -12,6 +12,7 @@
         xmlns:command="clr-namespace:PNID_Viewer.ViewModel.Commands"
         mc:Ignorable="d"
         Title="MainWindow" Height="700" Width="1000">
+    
     <Window.Resources>
         <command:OpenImageCommand x:Key="OpenImage"/>
         <vm:ViewerVM x:Key="vm"/>
@@ -45,34 +46,40 @@
 
 
 
-            <vm:ZoomBorder x:Name="border" ClipToBounds="True" Background="Gray" >
-                <ItemsControl DataContext="{Binding Source={StaticResource vm}}" ItemsSource="{Binding Path=CheckedXmlDatas, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <!--TODO: 캔버스 사이즈 바인딩-->
-                            <Canvas MinHeight="1000" MinWidth="1000" Height="7016" Width="9933" >
+            <vm:ZoomBorder x:Name="border" ClipToBounds="True" Background="Gray">
+            <ItemsControl DataContext="{Binding Source={StaticResource vm}}" ItemsSource="{Binding Path=CheckedXmlDatas, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <!--TODO: 캔버스 사이즈 바인딩-->
+                        <Canvas MinHeight="1000" MinWidth="1000" Height="7016" Width="9933" >
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseLeftButtonDown">
+                                    <i:InvokeCommandAction
+                                         Command="{Binding RelativeSource={RelativeSource AncestorType=Window,
+                                        Mode=FindAncestor}, Path=DataContext.OnMouseLeftButtonDownCommand}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                            <Canvas.Background>
+                                <ImageBrush ImageSource="{Binding Source={StaticResource OpenImage}, Path=ImagePath, UpdateSourceTrigger=PropertyChanged}"/>
+                            </Canvas.Background>
+                        </Canvas>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
 
-                                <Canvas.Background>
-                                    <ImageBrush ImageSource="{Binding Source={StaticResource OpenImage}, Path=ImagePath, UpdateSourceTrigger=PropertyChanged}"/>
-                                </Canvas.Background>
-                            </Canvas>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemContainerStyle>
+                    <Style TargetType="ContentPresenter">
+                        <Setter Property="Canvas.Left" Value="{Binding Xmin}"/>
+                        <Setter Property="Canvas.Top" Value="{Binding Ymin}"/>
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
 
-                    <ItemsControl.ItemContainerStyle>
-                        <Style TargetType="ContentPresenter">
-                            <Setter Property="Canvas.Left" Value="{Binding Xmin}"/>
-                            <Setter Property="Canvas.Top" Value="{Binding Ymin}"/>
-                        </Style>
-                    </ItemsControl.ItemContainerStyle>
-
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Rectangle Width="{Binding RectangleWidth}" Height="{Binding RectangleHeight}" Stroke="Red" StrokeThickness="2"/>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </vm:ZoomBorder>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Rectangle Width="{Binding RectangleWidth}" Height="{Binding RectangleHeight}" Stroke="Red" StrokeThickness="2"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+                </vm:ZoomBorder>
 
             <GridSplitter Grid.Column="1" Background="LightGray" Width="5" HorizontalAlignment="Center" VerticalAlignment="Stretch" ShowsPreview="True"/>
 

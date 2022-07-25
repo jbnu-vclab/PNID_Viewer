@@ -17,7 +17,7 @@ using System.Xml;
 namespace PNID_Viewer.ViewModel
 {
 
-    public class ViewerVM
+    public class ViewerVM : INotifyPropertyChanged
     {
         public XmlModel XmlModel { get; set; }
         public FilePathModel FilePathModel { get; set; }
@@ -51,7 +51,28 @@ namespace PNID_Viewer.ViewModel
             OpenXmlCommand = new OpenXmlCommand(this);
             WriteXmlCommand = new WriteXmlCommand(this);
             IsCheckedCommand = new IsCheckedCommand(this);
+            OnMouseLeftButtonDownCommand = new RelayCommand((n) => CtrlKeyDown());
         }
+
+        public void CtrlKeyDown()
+        {
+            if(Keyboard.IsKeyDown(Key.LeftCtrl))
+            {
+                MessageBox.Show("Ctrl+마우스 이벤트");
+            }
+        }
+
+        public RelayCommand OnMouseLeftButtonDownCommand { get; set; }
+
+        protected void OnPropertyChanged(string propertyName)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         //CheckedXmlDatas의 변화
         private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -308,6 +329,5 @@ namespace PNID_Viewer.ViewModel
             return lastWord;
         }
 
-       
     }
 }
