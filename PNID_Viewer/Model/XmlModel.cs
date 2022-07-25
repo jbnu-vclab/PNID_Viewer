@@ -104,8 +104,7 @@ namespace PNID_Viewer.Model
             get { return rectangleHeight; }
             set { rectangleHeight = value; OnPropertyChanged(nameof(RectangleHeight)); }
         }
-
-
+        
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -118,8 +117,15 @@ namespace PNID_Viewer.Model
                 if(propertyName.Equals("Xmin") || propertyName.Equals("Ymin") || 
                     propertyName.Equals("Xmax") || propertyName.Equals("Ymax"))
                 {
-                    RectangleWidth = Xmax - Xmin;
-                    RectangleHeight = Ymax - Ymin;
+                    if(Xmax > Xmin)
+                        RectangleWidth = Xmax - Xmin;
+                    else
+                        RectangleWidth = Xmin - Xmax;
+
+                    if(Ymax > Ymin)
+                        RectangleHeight = Ymax - Ymin;
+                    else
+                        RectangleWidth = Ymin - Ymax;
                 }
             }
         }

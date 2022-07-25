@@ -1,15 +1,14 @@
 ﻿using PNID_Viewer.Model;
+using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
-//https://stackoverflow.com/questions/741956/pan-zoom-image 참조
-//TODO: 큰 이미니는 줌이 덜 되는 듯함
 namespace PNID_Viewer.ViewModel
 {
-    public class ZoomBorder : Border
+    public class DrawRectangleEvent
     {
         private UIElement child = null;
         private Point origin;
@@ -54,16 +53,6 @@ namespace PNID_Viewer.ViewModel
                 child.RenderTransformOrigin = new Point(0.0, 0.0);
 
                 this.KeyDown += child_KeyboardDown;
-
-                if (temp == 0)
-                {
-                    this.MouseWheel += child_MouseWheel;
-                    this.MouseLeftButtonDown += child_MouseLeftButtonDown;
-                    this.MouseLeftButtonUp += child_MouseLeftButtonUp;
-                    this.MouseMove += child_MouseMove;
-                    this.PreviewMouseRightButtonDown += new MouseButtonEventHandler(
-                  child_PreviewMouseRightButtonDown);
-                }
             }
         }
 
@@ -152,6 +141,8 @@ namespace PNID_Viewer.ViewModel
         }
 
         public XmlModel XmlModel { get; set; }
+        public Action<object, KeyboardEventArgs> KeyDown { get; private set; }
+
         Point? downPoint;
 
         private void child_MouseLeftButtonDown_Draw(object sender, MouseButtonEventArgs e)
@@ -159,7 +150,7 @@ namespace PNID_Viewer.ViewModel
             var pos = e.GetPosition(this);
 
             downPoint = pos;
-            
+
             this.CaptureMouse();
         }
 
