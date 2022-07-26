@@ -47,6 +47,7 @@ namespace PNID_Viewer.ViewModel
 
             XmlDatas = new ObservableCollection<XmlModel>();
             CheckedXmlDatas = new ObservableCollection<XmlModel>();
+            CheckedXmlDatas.CollectionChanged += OnCollectionChanged;
 
             OpenXmlCommand = new OpenXmlCommand(this);
             WriteXmlCommand = new WriteXmlCommand(this);
@@ -67,11 +68,6 @@ namespace PNID_Viewer.ViewModel
             }
         }
 
-        public void OnMouseRightMoveCommand(object sender, MouseButtonEventArgs e)
-        {
-
-        }
-
         public void OnMouseRightButtonDownCommand(object sender, MouseButtonEventArgs e)
         {
             if (Keyboard.IsKeyDown(Key.LeftCtrl))
@@ -89,7 +85,38 @@ namespace PNID_Viewer.ViewModel
             }
         }
 
-        
+        //CheckedXmlDatas의 변화
+        private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+
+            //행 삭제할 때
+            if (e.Action == NotifyCollectionChangedAction.Remove)
+            {
+                ObservableCollection<XmlModel> xm = (ObservableCollection<XmlModel>)sender;
+                //XmlDatas에 변화 전달
+                //foreach (var item in xm)
+                //{
+                //    foreach (var item2 in XmlDatas)
+                //    {
+                //        if (item2.XmlFilename.Equals(xm[0].XmlFilename))
+                //        {
+                //            XmlDatas.Remove(item2);
+                //        }
+                //        XmlDatas.Add(item);
+                //    }
+
+                //}
+            }
+            //행 추가할 때
+            if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                //XmlDatas에 변화 전달
+                foreach (var item in XmlDatas)
+                {
+
+                }
+            }
+        }
 
         //XmlDatas에서 원하는 정보만을 CheckedXmlDatas에 추가/제거하는 함수
         //IsCheckedCommand에서 사용
@@ -101,6 +128,7 @@ namespace PNID_Viewer.ViewModel
                 if (item.XmlFilename.Equals(_XmlFileName))
                 {
                     CheckedXmlDatas.Add(item);
+
                 }
             }
 

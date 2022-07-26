@@ -47,7 +47,7 @@
 
 
             <vm:ZoomBorder x:Name="border" ClipToBounds="True" Background="Gray">
-            <ItemsControl DataContext="{Binding Source={StaticResource vm}}" ItemsSource="{Binding Path=CheckedXmlDatas, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}">
+            <ItemsControl DataContext="{Binding Source={StaticResource vm}}" ItemsSource="{Binding Path=CheckedXmlDatas, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True, UpdateSourceTrigger=PropertyChanged}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <!--TODO: 캔버스 사이즈 바인딩-->
@@ -78,7 +78,7 @@
 
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                            <Rectangle Width="{Binding RectangleWidth}" Height="{Binding RectangleHeight, UpdateSourceTrigger=PropertyChanged}" Stroke="Red" StrokeThickness="2" />
+                            <Rectangle Width="{Binding RectangleWidth}" Height="{Binding RectangleHeight}" Stroke="Red" StrokeThickness="2" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
@@ -109,6 +109,7 @@
                   ItemsSource="{Binding Path=CheckedXmlDatas, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
                   CanUserAddRows="True" CanUserDeleteRows="True">
                     <DataGrid.Columns>
+                        <DataGridTextColumn MinWidth="10" Width="Auto" Header="XmlFileName" Binding="{Binding XmlFilename}"/>
                         <DataGridTextColumn MinWidth="10" Width="Auto" Header="Name" Binding="{Binding Name}"/>
                         <DataGridTextColumn MinWidth="10" Width="Auto" Header="Degree" Binding="{Binding Degree}"/>
                         <DataGridTextColumn MinWidth="10" Width="Auto" Header="Xmin" Binding="{Binding Xmin}"/>
