@@ -47,7 +47,6 @@ namespace PNID_Viewer.ViewModel
 
             XmlDatas = new ObservableCollection<XmlModel>();
             CheckedXmlDatas = new ObservableCollection<XmlModel>();
-            CheckedXmlDatas.CollectionChanged += this.OnCollectionChanged;
 
             OpenXmlCommand = new OpenXmlCommand(this);
             WriteXmlCommand = new WriteXmlCommand(this);
@@ -68,6 +67,11 @@ namespace PNID_Viewer.ViewModel
             }
         }
 
+        public void OnMouseRightMoveCommand(object sender, MouseButtonEventArgs e)
+        {
+
+        }
+
         public void OnMouseRightButtonDownCommand(object sender, MouseButtonEventArgs e)
         {
             if (Keyboard.IsKeyDown(Key.LeftCtrl))
@@ -75,6 +79,7 @@ namespace PNID_Viewer.ViewModel
                 end = e.GetPosition((IInputElement)sender);
 
                 XmlModel temp = new XmlModel();
+                temp.XmlFilename = CheckedXmlDatas[0].XmlFilename;
                 temp.Xmax = (int)start.X;
                 temp.Xmin = (int)end.X;
                 temp.Ymax = (int)start.Y;
@@ -84,38 +89,7 @@ namespace PNID_Viewer.ViewModel
             }
         }
 
-        //CheckedXmlDatas의 변화
-        private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            //행 추가할 때
-            if(e.Action == NotifyCollectionChangedAction.Add)
-            {
-                //Default Value
-                //질문: XmlModel의 객체를 생성자에서 1번만 만들기
-                // vs 사용할 때마다(메소드 안에서) 생성
-                //주의)xml이 1개만 체크되어있어야함
-                //XmlModel.XmlFilename = CheckedXmlDatas[0].XmlFilename;
-                //XmlModel.Name = "";
-                //XmlModel.Filename = CheckedXmlDatas[0].Filename;
-                //XmlModel.Width = CheckedXmlDatas[0].Width;
-                //XmlModel.Height = CheckedXmlDatas[0].Height;
-                //XmlModel.Depth = CheckedXmlDatas[0].Depth;
-                //XmlModel.Degree = 0;
-                //XmlModel.Xmin = 0;
-                //XmlModel.Ymin = 0;
-                //XmlModel.Xmax = 0;
-                //XmlModel.Ymax = 0;
-                //XmlModel.RectangleWidth = 0;
-                //XmlModel.RectangleHeight = 0;
-
-                //CheckedXmlDatas.Add(XmlModel);        //이벤트 실행 중에 변경 불가
-            }
-            //행 삭제할 때
-            if (e.Action == NotifyCollectionChangedAction.Remove)
-            {
-                //XmlDatas에 변화 전달
-            }
-        }
+        
 
         //XmlDatas에서 원하는 정보만을 CheckedXmlDatas에 추가/제거하는 함수
         //IsCheckedCommand에서 사용

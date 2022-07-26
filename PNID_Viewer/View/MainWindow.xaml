@@ -78,7 +78,7 @@
 
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Rectangle Width="{Binding RectangleWidth}" Height="{Binding RectangleHeight}" Stroke="Red" StrokeThickness="2"/>
+                            <Rectangle Width="{Binding RectangleWidth}" Height="{Binding RectangleHeight, UpdateSourceTrigger=PropertyChanged}" Stroke="Red" StrokeThickness="2" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
