@@ -13,16 +13,15 @@ namespace PNID_Viewer.ViewModel.Commands
 {
     class OpenImageCommand : ICommand, INotifyPropertyChanged
     {
-        //TODO: Model 사용하기
-        //FilePath filePath { get; set; }
-
         private string imagePath;
+
         public string ImagePath
         {
             get { return imagePath; }
             set { imagePath = value; OnPropertyChanged(nameof(ImagePath)); }
         }
         public event PropertyChangedEventHandler PropertyChanged;
+
         protected void OnPropertyChanged(string name)
         {
             PropertyChangedEventHandler handler = PropertyChanged;
@@ -41,15 +40,13 @@ namespace PNID_Viewer.ViewModel.Commands
 
         public void Execute(object parameter)
         {
-            //TODO: 파일탐색기 -> 원하는 사진 선택 -> 사진 띄우기
-            //TODO: 이름바꾸기 OpenCommand로
             ImagePath = FileExplorer();
-            MessageBox.Show(ImagePath);
-
         }
+
         private string FileExplorer()
         {
             OpenFileDialog dig = new OpenFileDialog();
+            dig.Filter = "Image Files(*.BMP;*.JPG;*.GIF)|*.BMP;*.JPG;*.GIF|All files (*.*)|*.*";
             bool? result = dig.ShowDialog();
 
             if (result == true) return dig.FileName;

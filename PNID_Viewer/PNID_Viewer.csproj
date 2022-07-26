@@ -37,6 +37,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -49,16 +50,24 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Model\FilePath.cs" />
+    <Compile Include="Model\FilePathModel.cs" />
+    <Compile Include="Model\ImageSizeModel.cs" />
+    <Compile Include="Model\XmlModel.cs" />
+    <Compile Include="ViewModel\Commands\IsCheckedCommand.cs" />
+    <Compile Include="ViewModel\Commands\MouseDoubleClick.cs" />
     <Compile Include="ViewModel\Commands\OpenImageCommand.cs" />
+    <Compile Include="ViewModel\Commands\OpenXmlCommand.cs" />
+    <Compile Include="ViewModel\Commands\WriteXmlCommand.cs" />
+    <Compile Include="ViewModel\ViewerVM.cs" />
     <Compile Include="ViewModel\ZoomBorder.cs" />
-    <Page Include="MainWindow.xaml">
+    <Page Include="View\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -66,7 +75,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="View\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
@@ -97,8 +106,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="View\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

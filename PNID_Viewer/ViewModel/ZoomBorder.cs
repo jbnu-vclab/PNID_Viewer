@@ -4,9 +4,8 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
-
 //https://stackoverflow.com/questions/741956/pan-zoom-image 참조
-
+//TODO: 큰 이미니는 줌이 덜 되는 듯함
 namespace PNID_Viewer.ViewModel
 {
     public class ZoomBorder : Border
@@ -84,8 +83,8 @@ namespace PNID_Viewer.ViewModel
                 var st = GetScaleTransform(child);
                 var tt = GetTranslateTransform(child);
 
-                double zoom = e.Delta > 0 ? .2 : -.2;
-                if (!(e.Delta > 0) && (st.ScaleX < .4 || st.ScaleY < .4))
+                double zoom = e.Delta > 0 ? .05 : -.05;
+                if (!(e.Delta > 0) && (st.ScaleX <= .15 || st.ScaleY <= .15))
                     return;
 
                 Point relative = e.GetPosition(child);
@@ -142,6 +141,17 @@ namespace PNID_Viewer.ViewModel
                 }
             }
         }
+        /*
+        void child_DataClicked(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (child != null)
+            {
+                var tt = GetTranslateTransform(child);
+                tt.X = origin.X;
+                tt.Y = origin.Y;
+            }
+        }
+        */
 
         #endregion
     }
