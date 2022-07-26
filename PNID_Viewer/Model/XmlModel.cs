@@ -125,7 +125,7 @@ namespace PNID_Viewer.Model
                     if(Ymax > Ymin)
                         RectangleHeight = Ymax - Ymin;
                     else
-                        RectangleWidth = Ymin - Ymax;
+                        RectangleHeight = Ymin - Ymax;
                 }
             }
         }

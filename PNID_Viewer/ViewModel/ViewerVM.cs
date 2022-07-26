@@ -30,6 +30,7 @@ namespace PNID_Viewer.ViewModel
         //파일을 열면 XmlDatas에 전부 추가됨, 리스트에서 체크된 파일만 CheckedXmlDatas에 추가되어 화면에 보임
         public ObservableCollection<XmlModel> XmlDatas { get; set; }
         public ObservableCollection<XmlModel> CheckedXmlDatas { get; set; }
+        public ObservableCollection<XmlModel> TempXmlDatas { get; set; }
 
         //순서대로 xml을 열고, xml파일을 내보내고, 리스트 체크 여부를 알기 위한 것
         public OpenXmlCommand OpenXmlCommand { get; set; }
@@ -76,11 +77,20 @@ namespace PNID_Viewer.ViewModel
 
                 XmlModel temp = new XmlModel();
                 temp.XmlFilename = CheckedXmlDatas[0].XmlFilename;
-                temp.Xmax = (int)start.X;
-                temp.Xmin = (int)end.X;
-                temp.Ymax = (int)start.Y;
-                temp.Ymin = (int)end.Y;
+                temp.Xmax = (int)end.X;
+                temp.Xmin = (int)start.X;
+                temp.Ymax = (int)end.Y;
+                temp.Ymin = (int)start.Y;
 
+                if (temp.Xmax > temp.Xmin)
+                    temp.RectangleWidth = temp.Xmax - temp.Xmin;
+                else
+                    temp.RectangleWidth = temp.Xmin - temp.Xmax;
+
+                if (temp.Ymax > temp.Ymin)
+                    temp.RectangleHeight = temp.Ymax - temp.Ymin;
+                else
+                    temp.RectangleHeight = temp.Ymin - temp.Ymax;
                 CheckedXmlDatas.Add(temp);
             }
         }
@@ -88,33 +98,15 @@ namespace PNID_Viewer.ViewModel
         //CheckedXmlDatas의 변화
         private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-
             //행 삭제할 때
             if (e.Action == NotifyCollectionChangedAction.Remove)
             {
                 ObservableCollection<XmlModel> xm = (ObservableCollection<XmlModel>)sender;
-                //XmlDatas에 변화 전달
-                //foreach (var item in xm)
-                //{
-                //    foreach (var item2 in XmlDatas)
-                //    {
-                //        if (item2.XmlFilename.Equals(xm[0].XmlFilename))
-                //        {
-                //            XmlDatas.Remove(item2);
-                //        }
-                //        XmlDatas.Add(item);
-                //    }
-
-                //}
             }
             //행 추가할 때
             if (e.Action == NotifyCollectionChangedAction.Add)
             {
-                //XmlDatas에 변화 전달
-                foreach (var item in XmlDatas)
-                {
 
-                }
             }
         }
 
@@ -122,20 +114,37 @@ namespace PNID_Viewer.ViewModel
         //IsCheckedCommand에서 사용
         public void AddData(string _XmlFileName)
         {
-            //TODO: 다시체크할 때 수정사항 반영 안 됨 -> XmlDatas에 반영
+            TempXmlDatas = new ObservableCollection<XmlModel>();
+            //XmlDatas -> CheckedXmlDatas
             foreach (var item in XmlDatas)
             {
                 if (item.XmlFilename.Equals(_XmlFileName))
                 {
                     CheckedXmlDatas.Add(item);
-
+                    TempXmlDatas.Add(item);
                 }
             }
-
+            foreach (var item in TempXmlDatas)
+            {
+                if (item.XmlFilename.Equals(_XmlFileName))
+                {
+                    XmlDatas.Remove(item);
+                }
+            }
         }
         public void DeleteData(string _XmlFileName)
         {
-            foreach (var item in XmlDatas)
+            TempXmlDatas = new ObservableCollection<XmlModel>();
+            //CheckedXmlDatas -> XmlDatas
+            foreach (var item in CheckedXmlDatas)
+            {
+                if (item.XmlFilename.Equals(_XmlFileName))
+                {
+                    XmlDatas.Add(item);
+                    TempXmlDatas.Add(item);
+                }
+            }
+            foreach (var item in TempXmlDatas)
             {
                 if (item.XmlFilename.Equals(_XmlFileName))
                 {
@@ -170,7 +179,7 @@ namespace PNID_Viewer.ViewModel
                         return;
                     }
                 }
-                
+
                 XmlPathList.Add(FilePathModel.XmlPath);
                 XmlFileNameList.Add(FindNameToXmlPath(FilePathModel.XmlPath));
             }
@@ -269,7 +278,7 @@ namespace PNID_Viewer.ViewModel
             string dir = CreateFile();
             //TODO: 파일 이름 정하기
             //주의) 1개만 체크되어있어야함.
-            string fname = CheckedXmlDatas[0].XmlFilename+ "_edited.xml";
+            string fname = CheckedXmlDatas[0].XmlFilename + "_edited.xml";
             string strXMLPath = Path.Combine(dir, fname);
             XmlWriterSettings settings = new XmlWriterSettings
             {
@@ -314,7 +323,7 @@ namespace PNID_Viewer.ViewModel
             OpenFileDialog dig = new OpenFileDialog();
             dig.Filter = "Xml Files(*.xml;)|*.xml;|All files (*.*)|*.*";
             bool? result = dig.ShowDialog();
-            
+
             if (result == true) return dig.FileName;
             else return string.Empty;
         }
