@@ -5,11 +5,14 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity" 
+        xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions" 
         xmlns:local="clr-namespace:PNID_Viewer"
         xmlns:vm="clr-namespace:PNID_Viewer.ViewModel"
         xmlns:command="clr-namespace:PNID_Viewer.ViewModel.Commands"
         mc:Ignorable="d"
         Title="MainWindow" Height="700" Width="1000">
+    
     <Window.Resources>
         <command:OpenImageCommand x:Key="OpenImage"/>
         <vm:ViewerVM x:Key="vm"/>
@@ -17,7 +20,6 @@
     <Window.DataContext>
         <vm:ViewerVM/>
     </Window.DataContext>
-
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -26,11 +28,11 @@
 
         <Menu Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Top">
             <MenuItem Header="열기">
-                <MenuItem Header="XML" Command="{Binding Source={StaticResource vm}, Path=OpenXmlCommand}"/>
+                <MenuItem Header="Xml" Command="{Binding Source={StaticResource vm}, Path=OpenXmlCommand}"/>
                 <MenuItem Header="Image" Command="{Binding Source={StaticResource OpenImage}}"/>
             </MenuItem>
             <MenuItem Header="내보내기">
-                <MenuItem Header="XML" Command="{Binding Source={StaticResource vm}, Path=WriteXmlCommand}"/>
+                <MenuItem Header="Xml" Command="{Binding Source={StaticResource vm}, Path=WriteXmlCommand}"/>
             </MenuItem>
         </Menu>
 
@@ -41,12 +43,24 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <vm:ZoomBorder x:Name="border" ClipToBounds="True" Background="Gray" >
-                <ItemsControl DataContext="{Binding Source={StaticResource vm}}" ItemsSource="{Binding Path=CheckedXmlDatas, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}">
+
+
+            <vm:ZoomBorder x:Name="border" ClipToBounds="True" Background="Gray">
+            <ItemsControl DataContext="{Binding Source={StaticResource vm}}" ItemsSource="{Binding Path=CheckedXmlDatas, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True, UpdateSourceTrigger=PropertyChanged}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <!--TODO: 캔버스 사이즈 바인딩-->
-                            <Canvas MinHeight="1000" MinWidth="1000" Height="7016" Width="9933">
+                            <Canvas MinHeight="1000" MinWidth="1000" Height="7016" Width="9933" >
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="MouseLeftButtonDown">
+                                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnMouseLeftButtonDownCommand" />
+                                    </i:EventTrigger>
+                                    
+                                    <i:EventTrigger EventName="MouseRightButtonDown">
+                                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnMouseRightButtonDownCommand" />
+                                    </i:EventTrigger>
+
+                                </i:Interaction.Triggers>
                                 <Canvas.Background>
                                     <ImageBrush ImageSource="{Binding Source={StaticResource OpenImage}, Path=ImagePath, UpdateSourceTrigger=PropertyChanged}"/>
                                 </Canvas.Background>
@@ -55,19 +69,19 @@
                     </ItemsControl.ItemsPanel>
 
                     <ItemsControl.ItemContainerStyle>
-                        <Style TargetType="ContentPresenter">
-                            <Setter Property="Canvas.Left" Value="{Binding Xmin}"/>
-                            <Setter Property="Canvas.Top" Value="{Binding Ymin}"/>
-                        </Style>
-                    </ItemsControl.ItemContainerStyle>
+                    <Style TargetType="ContentPresenter">
+                        <Setter Property="Canvas.Left" Value="{Binding Xmin}"/>
+                        <Setter Property="Canvas.Top" Value="{Binding Ymin}"/>
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
 
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Rectangle Width="{Binding RectangleWidth}" Height="{Binding RectangleHeight}" Stroke="Red" StrokeThickness="2"/>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </vm:ZoomBorder>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                            <Rectangle Width="{Binding RectangleWidth}" Height="{Binding RectangleHeight}" Stroke="Red" StrokeThickness="2" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+                </vm:ZoomBorder>
 
             <GridSplitter Grid.Column="1" Background="LightGray" Width="5" HorizontalAlignment="Center" VerticalAlignment="Stretch" ShowsPreview="True"/>
 
@@ -92,9 +106,9 @@
                 <DataGrid x:Name="XmlContentsDataGrid" Grid.Row="2" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto"
                   AutoGenerateColumns="False"  DataContext="{Binding Source={StaticResource vm}}"
                   ItemsSource="{Binding Path=CheckedXmlDatas, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
-                          
-                          CanUserAddRows="True" CanUserDeleteRows="True">
+                  CanUserAddRows="True" CanUserDeleteRows="True">
                     <DataGrid.Columns>
+                        <DataGridTextColumn MinWidth="10" Width="Auto" Header="XmlFileName" Binding="{Binding XmlFilename}"/>
                         <DataGridTextColumn MinWidth="10" Width="Auto" Header="Name" Binding="{Binding Name}"/>
                         <DataGridTextColumn MinWidth="10" Width="Auto" Header="Degree" Binding="{Binding Degree}"/>
                         <DataGridTextColumn MinWidth="10" Width="Auto" Header="Xmin" Binding="{Binding Xmin}"/>

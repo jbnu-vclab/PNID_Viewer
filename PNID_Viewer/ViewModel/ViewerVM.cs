@@ -11,12 +11,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using System.Xml;
 
 namespace PNID_Viewer.ViewModel
 {
 
-    public class ViewerVM
+    public class ViewerVM : Canvas
     {
         public XmlModel XmlModel { get; set; }
         public FilePathModel FilePathModel { get; set; }
@@ -28,6 +30,7 @@ namespace PNID_Viewer.ViewModel
         //파일을 열면 XmlDatas에 전부 추가됨, 리스트에서 체크된 파일만 CheckedXmlDatas에 추가되어 화면에 보임
         public ObservableCollection<XmlModel> XmlDatas { get; set; }
         public ObservableCollection<XmlModel> CheckedXmlDatas { get; set; }
+        public ObservableCollection<XmlModel> TempXmlDatas { get; set; }
 
         //순서대로 xml을 열고, xml파일을 내보내고, 리스트 체크 여부를 알기 위한 것
         public OpenXmlCommand OpenXmlCommand { get; set; }
@@ -45,42 +48,65 @@ namespace PNID_Viewer.ViewModel
 
             XmlDatas = new ObservableCollection<XmlModel>();
             CheckedXmlDatas = new ObservableCollection<XmlModel>();
-            CheckedXmlDatas.CollectionChanged += this.OnCollectionChanged;
+            CheckedXmlDatas.CollectionChanged += OnCollectionChanged;
 
             OpenXmlCommand = new OpenXmlCommand(this);
             WriteXmlCommand = new WriteXmlCommand(this);
             IsCheckedCommand = new IsCheckedCommand(this);
+
+            this.MouseLeftButtonDown += OnMouseLeftButtonDownCommand;
+            this.MouseRightButtonDown += OnMouseRightButtonDownCommand;
+        }
+
+        Point start;
+        Point end;
+
+        public void OnMouseLeftButtonDownCommand(object sender, MouseButtonEventArgs e)
+        {
+            if (Keyboard.IsKeyDown(Key.LeftCtrl))
+            {
+                start = e.GetPosition((IInputElement)sender);
+            }
+        }
+
+        public void OnMouseRightButtonDownCommand(object sender, MouseButtonEventArgs e)
+        {
+            if (Keyboard.IsKeyDown(Key.LeftCtrl))
+            {
+                end = e.GetPosition((IInputElement)sender);
+
+                XmlModel temp = new XmlModel();
+                temp.XmlFilename = CheckedXmlDatas[0].XmlFilename;
+                temp.Xmax = (int)end.X;
+                temp.Xmin = (int)start.X;
+                temp.Ymax = (int)end.Y;
+                temp.Ymin = (int)start.Y;
+
+                if (temp.Xmax > temp.Xmin)
+                    temp.RectangleWidth = temp.Xmax - temp.Xmin;
+                else
+                    temp.RectangleWidth = temp.Xmin - temp.Xmax;
+
+                if (temp.Ymax > temp.Ymin)
+                    temp.RectangleHeight = temp.Ymax - temp.Ymin;
+                else
+                    temp.RectangleHeight = temp.Ymin - temp.Ymax;
+                CheckedXmlDatas.Add(temp);
+            }
         }
 
         //CheckedXmlDatas의 변화
         private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            //행 추가할 때
-            if(e.Action == NotifyCollectionChangedAction.Add)
-            {
-                //Default Value
-                //질문: XmlModel의 객체를 생성자에서 1번만 만들기
-                // vs 사용할 때마다(메소드 안에서) 생성
-                //주의)xml이 1개만 체크되어있어야함
-                //XmlModel.XmlFilename = CheckedXmlDatas[0].XmlFilename;
-                //XmlModel.Name = "";
-                //XmlModel.Filename = CheckedXmlDatas[0].Filename;
-                //XmlModel.Width = CheckedXmlDatas[0].Width;
-                //XmlModel.Height = CheckedXmlDatas[0].Height;
-                //XmlModel.Depth = CheckedXmlDatas[0].Depth;
-                //XmlModel.Degree = 0;
-                //XmlModel.Xmin = 0;
-                //XmlModel.Ymin = 0;
-                //XmlModel.Xmax = 0;
-                //XmlModel.Ymax = 0;
-                //XmlModel.RectangleWidth = 0;
-                //XmlModel.RectangleHeight = 0;
-                //CheckedXmlDatas.Add(XmlModel);        //이벤트 실행 중에 변경 불가
-            }
             //행 삭제할 때
             if (e.Action == NotifyCollectionChangedAction.Remove)
             {
-                //XmlDatas에 변화 전달
+                ObservableCollection<XmlModel> xm = (ObservableCollection<XmlModel>)sender;
+            }
+            //행 추가할 때
+            if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+
             }
         }
 
@@ -88,19 +114,37 @@ namespace PNID_Viewer.ViewModel
         //IsCheckedCommand에서 사용
         public void AddData(string _XmlFileName)
         {
-            //TODO: 다시체크할 때 수정사항 반영 안 됨 -> XmlDatas에 반영
+            TempXmlDatas = new ObservableCollection<XmlModel>();
+            //XmlDatas -> CheckedXmlDatas
             foreach (var item in XmlDatas)
             {
                 if (item.XmlFilename.Equals(_XmlFileName))
                 {
                     CheckedXmlDatas.Add(item);
+                    TempXmlDatas.Add(item);
                 }
             }
-
+            foreach (var item in TempXmlDatas)
+            {
+                if (item.XmlFilename.Equals(_XmlFileName))
+                {
+                    XmlDatas.Remove(item);
+                }
+            }
         }
         public void DeleteData(string _XmlFileName)
         {
-            foreach (var item in XmlDatas)
+            TempXmlDatas = new ObservableCollection<XmlModel>();
+            //CheckedXmlDatas -> XmlDatas
+            foreach (var item in CheckedXmlDatas)
+            {
+                if (item.XmlFilename.Equals(_XmlFileName))
+                {
+                    XmlDatas.Add(item);
+                    TempXmlDatas.Add(item);
+                }
+            }
+            foreach (var item in TempXmlDatas)
             {
                 if (item.XmlFilename.Equals(_XmlFileName))
                 {
@@ -135,7 +179,7 @@ namespace PNID_Viewer.ViewModel
                         return;
                     }
                 }
-                
+
                 XmlPathList.Add(FilePathModel.XmlPath);
                 XmlFileNameList.Add(FindNameToXmlPath(FilePathModel.XmlPath));
             }
@@ -231,11 +275,21 @@ namespace PNID_Viewer.ViewModel
         }
         public void WriteXml()
         {
-            string dir = CreateFile();
-            //TODO: 파일 이름 정하기
             //주의) 1개만 체크되어있어야함.
-            string fname = CheckedXmlDatas[0].XmlFilename+ "_edited.xml";
-            string strXMLPath = Path.Combine(dir, fname);
+            string str;
+            SaveFileDialog dialog = new SaveFileDialog();
+            dialog.Filter = "Xml Files(*.xml;)|*.xml;|All files (*.*)|*.*";
+            if (dialog.ShowDialog() == true)
+            {
+                str = dialog.FileName;
+                //MessageBox.Show(str);
+            }
+            else
+            {
+                //MessageBox.Show("!");
+                return;
+            }
+
             XmlWriterSettings settings = new XmlWriterSettings
             {
                 Indent = true,
@@ -244,7 +298,7 @@ namespace PNID_Viewer.ViewModel
                 NewLineHandling = NewLineHandling.Replace,
                 OmitXmlDeclaration = false
             };
-            using (XmlWriter wr = XmlWriter.Create(strXMLPath, settings))
+            using (XmlWriter wr = XmlWriter.Create(str, settings))
             {
                 wr.WriteStartDocument();
                 wr.WriteStartElement("annotation");
@@ -258,7 +312,8 @@ namespace PNID_Viewer.ViewModel
                 foreach (var item in CheckedXmlDatas)
                 {
                     wr.WriteStartElement("object");
-                    wr.WriteElementString("name", item.Name.ToString());
+                    if (item.Name == null) item.Name = "_";
+                    wr.WriteElementString("name", item.Name);
                     wr.WriteElementString("degree", item.Degree.ToString());
                     wr.WriteStartElement("bndbox");
                     wr.WriteElementString("xmin", item.Xmin.ToString());
@@ -279,26 +334,11 @@ namespace PNID_Viewer.ViewModel
             OpenFileDialog dig = new OpenFileDialog();
             dig.Filter = "Xml Files(*.xml;)|*.xml;|All files (*.*)|*.*";
             bool? result = dig.ShowDialog();
-            
+
             if (result == true) return dig.FileName;
             else return string.Empty;
         }
 
-        //Xml을 내보낼 때 파일 생성
-        private string CreateFile()
-        {
-            string path = @"C:\Edited_Xmls";
-            DirectoryInfo directoryInfo = new DirectoryInfo(path);
-
-
-            if (!directoryInfo.Exists)
-            {
-                directoryInfo.Create();
-                MessageBox.Show(@"'C:\Edited_Xmls'에 파일이 저장됩니다.");
-                return @"C:\Edited_Xmls";
-            }
-            return @"C:\Edited_Xmls";
-        }
         //파일 경로 -> 파일 이름
         private string FindNameToXmlPath(string Path)
         {
@@ -306,5 +346,6 @@ namespace PNID_Viewer.ViewModel
             string lastWord = words[words.Length - 1];
             return lastWord;
         }
+
     }
 }

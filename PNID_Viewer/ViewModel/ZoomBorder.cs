@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using PNID_Viewer.Model;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -36,6 +37,7 @@ namespace PNID_Viewer.ViewModel
                 base.Child = value;
             }
         }
+        
 
         public void Initialize(UIElement element)
         {
@@ -49,12 +51,13 @@ namespace PNID_Viewer.ViewModel
                 group.Children.Add(tt);
                 child.RenderTransform = group;
                 child.RenderTransformOrigin = new Point(0.0, 0.0);
+                
                 this.MouseWheel += child_MouseWheel;
                 this.MouseLeftButtonDown += child_MouseLeftButtonDown;
                 this.MouseLeftButtonUp += child_MouseLeftButtonUp;
                 this.MouseMove += child_MouseMove;
                 this.PreviewMouseRightButtonDown += new MouseButtonEventHandler(
-                  child_PreviewMouseRightButtonDown);
+              child_PreviewMouseRightButtonDown);
             }
         }
 
@@ -125,7 +128,6 @@ namespace PNID_Viewer.ViewModel
 
         void child_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-            this.Reset();
         }
 
         private void child_MouseMove(object sender, MouseEventArgs e)
@@ -141,17 +143,7 @@ namespace PNID_Viewer.ViewModel
                 }
             }
         }
-        /*
-        void child_DataClicked(object sender, DataGridViewCellMouseEventArgs e)
-        {
-            if (child != null)
-            {
-                var tt = GetTranslateTransform(child);
-                tt.X = origin.X;
-                tt.Y = origin.Y;
-            }
-        }
-        */
+        
 
         #endregion
     }
