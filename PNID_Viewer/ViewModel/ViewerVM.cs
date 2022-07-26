@@ -275,11 +275,21 @@ namespace PNID_Viewer.ViewModel
         }
         public void WriteXml()
         {
-            string dir = CreateFile();
-            //TODO: 파일 이름 정하기
             //주의) 1개만 체크되어있어야함.
-            string fname = CheckedXmlDatas[0].XmlFilename + "_edited.xml";
-            string strXMLPath = Path.Combine(dir, fname);
+            string str;
+            SaveFileDialog dialog = new SaveFileDialog();
+            dialog.Filter = "Xml Files(*.xml;)|*.xml;|All files (*.*)|*.*";
+            if (dialog.ShowDialog() == true)
+            {
+                str = dialog.FileName;
+                //MessageBox.Show(str);
+            }
+            else
+            {
+                //MessageBox.Show("!");
+                return;
+            }
+
             XmlWriterSettings settings = new XmlWriterSettings
             {
                 Indent = true,
@@ -288,7 +298,7 @@ namespace PNID_Viewer.ViewModel
                 NewLineHandling = NewLineHandling.Replace,
                 OmitXmlDeclaration = false
             };
-            using (XmlWriter wr = XmlWriter.Create(strXMLPath, settings))
+            using (XmlWriter wr = XmlWriter.Create(str, settings))
             {
                 wr.WriteStartDocument();
                 wr.WriteStartElement("annotation");
@@ -302,7 +312,8 @@ namespace PNID_Viewer.ViewModel
                 foreach (var item in CheckedXmlDatas)
                 {
                     wr.WriteStartElement("object");
-                    wr.WriteElementString("name", item.Name.ToString());
+                    if (item.Name == null) item.Name = "_";
+                    wr.WriteElementString("name", item.Name);
                     wr.WriteElementString("degree", item.Degree.ToString());
                     wr.WriteStartElement("bndbox");
                     wr.WriteElementString("xmin", item.Xmin.ToString());
@@ -328,21 +339,6 @@ namespace PNID_Viewer.ViewModel
             else return string.Empty;
         }
 
-        //Xml을 내보낼 때 파일 생성
-        private string CreateFile()
-        {
-            string path = @"C:\Edited_Xmls";
-            DirectoryInfo directoryInfo = new DirectoryInfo(path);
-
-
-            if (!directoryInfo.Exists)
-            {
-                directoryInfo.Create();
-                MessageBox.Show(@"'C:\Edited_Xmls'에 파일이 저장됩니다.");
-                return @"C:\Edited_Xmls";
-            }
-            return @"C:\Edited_Xmls";
-        }
         //파일 경로 -> 파일 이름
         private string FindNameToXmlPath(string Path)
         {

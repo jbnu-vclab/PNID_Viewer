@@ -20,7 +20,6 @@
     <Window.DataContext>
         <vm:ViewerVM/>
     </Window.DataContext>
-
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -29,11 +28,11 @@
 
         <Menu Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Top">
             <MenuItem Header="열기">
-                <MenuItem Header="XML" Command="{Binding Source={StaticResource vm}, Path=OpenXmlCommand}"/>
+                <MenuItem Header="Xml" Command="{Binding Source={StaticResource vm}, Path=OpenXmlCommand}"/>
                 <MenuItem Header="Image" Command="{Binding Source={StaticResource OpenImage}}"/>
             </MenuItem>
             <MenuItem Header="내보내기">
-                <MenuItem Header="XML" Command="{Binding Source={StaticResource vm}, Path=WriteXmlCommand}"/>
+                <MenuItem Header="Xml" Command="{Binding Source={StaticResource vm}, Path=WriteXmlCommand}"/>
             </MenuItem>
         </Menu>
 
