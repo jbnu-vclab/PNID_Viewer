@@ -37,8 +37,7 @@ namespace PNID_Viewer.ViewModel
                 base.Child = value;
             }
         }
-
-        int temp = 0;
+        
 
         public void Initialize(UIElement element)
         {
@@ -52,18 +51,13 @@ namespace PNID_Viewer.ViewModel
                 group.Children.Add(tt);
                 child.RenderTransform = group;
                 child.RenderTransformOrigin = new Point(0.0, 0.0);
-
-                this.KeyDown += child_KeyboardDown;
-
-                if (temp == 0)
-                {
-                    this.MouseWheel += child_MouseWheel;
-                    this.MouseLeftButtonDown += child_MouseLeftButtonDown;
-                    this.MouseLeftButtonUp += child_MouseLeftButtonUp;
-                    this.MouseMove += child_MouseMove;
-                    this.PreviewMouseRightButtonDown += new MouseButtonEventHandler(
-                  child_PreviewMouseRightButtonDown);
-                }
+                
+                this.MouseWheel += child_MouseWheel;
+                this.MouseLeftButtonDown += child_MouseLeftButtonDown;
+                this.MouseLeftButtonUp += child_MouseLeftButtonUp;
+                this.MouseMove += child_MouseMove;
+                this.PreviewMouseRightButtonDown += new MouseButtonEventHandler(
+              child_PreviewMouseRightButtonDown);
             }
         }
 
@@ -134,7 +128,6 @@ namespace PNID_Viewer.ViewModel
 
         void child_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-            this.Reset();
         }
 
         private void child_MouseMove(object sender, MouseEventArgs e)
@@ -150,51 +143,7 @@ namespace PNID_Viewer.ViewModel
                 }
             }
         }
-
-        public XmlModel XmlModel { get; set; }
-        Point? downPoint;
-
-        private void child_MouseLeftButtonDown_Draw(object sender, MouseButtonEventArgs e)
-        {
-            var pos = e.GetPosition(this);
-
-            downPoint = pos;
-            
-            this.CaptureMouse();
-        }
-
-        private void child_MouseMove_Draw(object sender, MouseEventArgs e)
-        {
-
-            if (child != null)
-            {
-                if (child.IsMouseCaptured)
-                {
-                    var pos = e.GetPosition(this);
-
-                    XmlModel.Xmax = (int)downPoint.Value.X;
-                    XmlModel.Ymax = (int)downPoint.Value.Y;
-
-                    XmlModel.Xmin = (int)pos.X;
-                    XmlModel.Ymin = (int)pos.Y;
-                }
-            }
-        }
-
-        private void child_KeyboardDown(object sender, KeyboardEventArgs e)
-        {
-            if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-            {
-                MessageBox.Show("이벤트작동");
-                temp = 1;
-
-                this.MouseLeftButtonDown += child_MouseLeftButtonDown_Draw;
-                this.MouseMove += child_MouseMove_Draw;
-                this.MouseLeftButtonUp += child_MouseLeftButtonUp;
-            }
-
-            temp = 0;
-        }
+        
 
         #endregion
     }

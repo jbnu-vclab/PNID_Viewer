@@ -11,13 +11,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Xml;
 
 namespace PNID_Viewer.ViewModel
 {
 
-    public class ViewerVM
+    public class ViewerVM : Canvas
     {
         public XmlModel XmlModel { get; set; }
         public FilePathModel FilePathModel { get; set; }
@@ -51,6 +52,36 @@ namespace PNID_Viewer.ViewModel
             OpenXmlCommand = new OpenXmlCommand(this);
             WriteXmlCommand = new WriteXmlCommand(this);
             IsCheckedCommand = new IsCheckedCommand(this);
+
+            this.MouseLeftButtonDown += OnMouseLeftButtonDownCommand;
+            this.MouseRightButtonDown += OnMouseRightButtonDownCommand;
+        }
+
+        Point start;
+        Point end;
+
+        public void OnMouseLeftButtonDownCommand(object sender, MouseButtonEventArgs e)
+        {
+            if (Keyboard.IsKeyDown(Key.LeftCtrl))
+            {
+                start = e.GetPosition((IInputElement)sender);
+            }
+        }
+
+        public void OnMouseRightButtonDownCommand(object sender, MouseButtonEventArgs e)
+        {
+            if (Keyboard.IsKeyDown(Key.LeftCtrl))
+            {
+                end = e.GetPosition((IInputElement)sender);
+
+                XmlModel temp = new XmlModel();
+                temp.Xmax = (int)start.X;
+                temp.Xmin = (int)end.X;
+                temp.Ymax = (int)start.Y;
+                temp.Ymin = (int)end.Y;
+
+                CheckedXmlDatas.Add(temp);
+            }
         }
 
         //CheckedXmlDatas의 변화
@@ -309,6 +340,5 @@ namespace PNID_Viewer.ViewModel
             return lastWord;
         }
 
-       
     }
 }
