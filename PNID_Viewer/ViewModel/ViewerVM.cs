@@ -17,7 +17,7 @@ using System.Xml;
 
 namespace PNID_Viewer.ViewModel
 {
-
+    //TODO: 표 수정시 ctrl + Z 기능이 없음
     public class ViewerVM : Canvas
     {
         public XmlModel XmlModel { get; set; }
@@ -48,7 +48,6 @@ namespace PNID_Viewer.ViewModel
 
             XmlDatas = new ObservableCollection<XmlModel>();
             CheckedXmlDatas = new ObservableCollection<XmlModel>();
-            CheckedXmlDatas.CollectionChanged += OnCollectionChanged;
 
             OpenXmlCommand = new OpenXmlCommand(this);
             WriteXmlCommand = new WriteXmlCommand(this);
@@ -95,20 +94,6 @@ namespace PNID_Viewer.ViewModel
             }
         }
 
-        //CheckedXmlDatas의 변화
-        private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            //행 삭제할 때
-            if (e.Action == NotifyCollectionChangedAction.Remove)
-            {
-                ObservableCollection<XmlModel> xm = (ObservableCollection<XmlModel>)sender;
-            }
-            //행 추가할 때
-            if (e.Action == NotifyCollectionChangedAction.Add)
-            {
-
-            }
-        }
 
         //XmlDatas에서 원하는 정보만을 CheckedXmlDatas에 추가/제거하는 함수
         //IsCheckedCommand에서 사용
@@ -312,7 +297,7 @@ namespace PNID_Viewer.ViewModel
                 foreach (var item in CheckedXmlDatas)
                 {
                     wr.WriteStartElement("object");
-                    if (item.Name == null) item.Name = "_";
+                    //TODO :name에 빈 값이 나올 때 오류 발생
                     wr.WriteElementString("name", item.Name);
                     wr.WriteElementString("degree", item.Degree.ToString());
                     wr.WriteStartElement("bndbox");

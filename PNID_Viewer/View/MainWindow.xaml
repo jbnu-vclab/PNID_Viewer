@@ -108,13 +108,12 @@
                   ItemsSource="{Binding Path=CheckedXmlDatas, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
                   CanUserAddRows="True" CanUserDeleteRows="True">
                     <DataGrid.Columns>
-                        <DataGridTextColumn MinWidth="10" Width="Auto" Header="XmlFileName" Binding="{Binding XmlFilename}"/>
-                        <DataGridTextColumn MinWidth="10" Width="Auto" Header="Name" Binding="{Binding Name}"/>
                         <DataGridTextColumn MinWidth="10" Width="Auto" Header="Degree" Binding="{Binding Degree}"/>
                         <DataGridTextColumn MinWidth="10" Width="Auto" Header="Xmin" Binding="{Binding Xmin}"/>
                         <DataGridTextColumn MinWidth="10" Width="Auto" Header="Ymin" Binding="{Binding Ymin}"/>
                         <DataGridTextColumn MinWidth="10" Width="Auto" Header="Xmax" Binding="{Binding Xmax}"/>
                         <DataGridTextColumn MinWidth="10" Width="Auto" Header="Ymax" Binding="{Binding Ymax}"/>
+                        <DataGridTextColumn MinWidth="10" Width="Auto" Header="Name" Binding="{Binding Name}"/>
                     </DataGrid.Columns>
                 </DataGrid>
 
