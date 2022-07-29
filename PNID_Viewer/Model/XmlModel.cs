@@ -26,6 +26,13 @@ namespace PNID_Viewer.Model
             set { filename = value; OnPropertyChanged(nameof(Filename)); }
         }
 
+        private string color;
+        public string Color
+        {
+            get { return color; }
+            set { color = value; OnPropertyChanged(nameof(Color)); }
+        }
+
         private int width;
         public int Width
         {

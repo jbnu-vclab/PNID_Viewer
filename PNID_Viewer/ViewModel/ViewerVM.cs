@@ -30,6 +30,8 @@ namespace PNID_Viewer.ViewModel
         //파일을 열면 XmlDatas에 전부 추가됨, 리스트에서 체크된 파일만 CheckedXmlDatas에 추가되어 화면에 보임
         public ObservableCollection<XmlModel> XmlDatas { get; set; }
         public ObservableCollection<XmlModel> CheckedXmlDatas { get; set; }
+        public ObservableCollection<XmlModel> ViewXmlDatas { get; set; }
+        public ObservableCollection<XmlModel> tempCheckedXmlDatas { get; set; }
         public ObservableCollection<XmlModel> TempXmlDatas { get; set; }
 
         //순서대로 xml을 열고, xml파일을 내보내고, 리스트 체크 여부를 알기 위한 것
@@ -48,50 +50,109 @@ namespace PNID_Viewer.ViewModel
 
             XmlDatas = new ObservableCollection<XmlModel>();
             CheckedXmlDatas = new ObservableCollection<XmlModel>();
+            ViewXmlDatas = new ObservableCollection<XmlModel>();
+            tempCheckedXmlDatas = new ObservableCollection<XmlModel>();
             CheckedXmlDatas.CollectionChanged += OnCollectionChanged;
+            ViewXmlDatas.CollectionChanged += OnCollectionChanged;
+            tempCheckedXmlDatas.CollectionChanged += OnCollectionChanged;
+
 
             OpenXmlCommand = new OpenXmlCommand(this);
             WriteXmlCommand = new WriteXmlCommand(this);
             IsCheckedCommand = new IsCheckedCommand(this);
 
             this.MouseLeftButtonDown += OnMouseLeftButtonDownCommand;
-            this.MouseRightButtonDown += OnMouseRightButtonDownCommand;
+            this.MouseMove += OnMouseMoveCommand ;
         }
 
         Point start;
         Point end;
+        int tempNum = -1;
 
         public void OnMouseLeftButtonDownCommand(object sender, MouseButtonEventArgs e)
         {
-            if (Keyboard.IsKeyDown(Key.LeftCtrl))
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) && tempNum == -1)
             {
+                XmlModel temp = new XmlModel();
                 start = e.GetPosition((IInputElement)sender);
+                tempCheckedXmlDatas.Insert(0, temp);
+                tempNum = 1;
             }
-        }
 
-        public void OnMouseRightButtonDownCommand(object sender, MouseButtonEventArgs e)
-        {
-            if (Keyboard.IsKeyDown(Key.LeftCtrl))
+            else if (Keyboard.IsKeyDown(Key.LeftCtrl) && tempNum == 1)
             {
                 end = e.GetPosition((IInputElement)sender);
 
                 XmlModel temp = new XmlModel();
                 temp.XmlFilename = CheckedXmlDatas[0].XmlFilename;
-                temp.Xmax = (int)end.X;
-                temp.Xmin = (int)start.X;
-                temp.Ymax = (int)end.Y;
-                temp.Ymin = (int)start.Y;
+                temp.Color = CheckedXmlDatas[0].Color;
 
-                if (temp.Xmax > temp.Xmin)
-                    temp.RectangleWidth = temp.Xmax - temp.Xmin;
-                else
-                    temp.RectangleWidth = temp.Xmin - temp.Xmax;
+                if (start.X > end.X)
+                {
+                    temp.Xmax = (int)start.X;
+                    temp.Xmin = (int)end.X;
+                }
 
-                if (temp.Ymax > temp.Ymin)
-                    temp.RectangleHeight = temp.Ymax - temp.Ymin;
                 else
-                    temp.RectangleHeight = temp.Ymin - temp.Ymax;
-                CheckedXmlDatas.Add(temp);
+                {
+                    temp.Xmax = (int)end.X;
+                    temp.Xmin = (int)start.X;
+                }
+
+                if (start.Y > end.Y)
+                {
+                    temp.Ymax = (int)start.Y;
+                    temp.Ymin = (int)end.Y;
+                }
+                else
+                {
+                    temp.Ymax = (int)end.Y;
+                    temp.Ymin = (int)start.Y;
+                }
+                temp.RectangleWidth = temp.Xmax - temp.Xmin;
+                temp.RectangleHeight = temp.Ymax - temp.Ymin;
+
+                tempCheckedXmlDatas[0] = temp;
+                CheckedXmlDatas.Insert(0, temp);
+                tempNum = -1;
+            }
+        }
+
+        public void OnMouseMoveCommand(object sender, MouseEventArgs e)
+        {
+            if (tempNum==1)
+            {
+                end = e.GetPosition((IInputElement)sender);
+
+                XmlModel temp = new XmlModel();
+                temp.Color = CheckedXmlDatas[0].Color;
+
+                if (start.X > end.X)
+                {
+                    temp.Xmax = (int)start.X;
+                    temp.Xmin = (int)end.X;
+                }
+                    
+                else
+                {
+                    temp.Xmax = (int)end.X;
+                    temp.Xmin = (int)start.X;
+                }
+
+                if (start.Y > end.Y)
+                {
+                    temp.Ymax = (int)start.Y;
+                    temp.Ymin = (int)end.Y;
+                }
+                else
+                {
+                    temp.Ymax = (int)end.Y;
+                    temp.Ymin = (int)start.Y;
+                }
+
+                temp.RectangleWidth = temp.Xmax - temp.Xmin;
+                temp.RectangleHeight = temp.Ymax - temp.Ymin;
+                tempCheckedXmlDatas[0]=temp;
             }
         }
 
@@ -112,6 +173,21 @@ namespace PNID_Viewer.ViewModel
 
         //XmlDatas에서 원하는 정보만을 CheckedXmlDatas에 추가/제거하는 함수
         //IsCheckedCommand에서 사용
+
+        public void ViewData(string _XmlFileName)
+        {
+            MessageBox.Show("asdasd");
+            ViewXmlDatas.Clear();
+            //XmlDatas -> ViewXmlDaatas
+            foreach (var item in XmlDatas)
+            {
+                if (item.XmlFilename.Equals(_XmlFileName))
+                {
+                    ViewXmlDatas.Add(item);
+                }
+            }
+        }
+
         public void AddData(string _XmlFileName)
         {
             TempXmlDatas = new ObservableCollection<XmlModel>();
@@ -121,6 +197,7 @@ namespace PNID_Viewer.ViewModel
                 if (item.XmlFilename.Equals(_XmlFileName))
                 {
                     CheckedXmlDatas.Add(item);
+                    tempCheckedXmlDatas.Add(item);
                     TempXmlDatas.Add(item);
                 }
             }
@@ -132,6 +209,7 @@ namespace PNID_Viewer.ViewModel
                 }
             }
         }
+
         public void DeleteData(string _XmlFileName)
         {
             TempXmlDatas = new ObservableCollection<XmlModel>();
@@ -144,11 +222,13 @@ namespace PNID_Viewer.ViewModel
                     TempXmlDatas.Add(item);
                 }
             }
+
             foreach (var item in TempXmlDatas)
             {
                 if (item.XmlFilename.Equals(_XmlFileName))
                 {
                     CheckedXmlDatas.Remove(item);
+                    tempCheckedXmlDatas.Remove(item);
                 }
             }
         }
@@ -158,6 +238,7 @@ namespace PNID_Viewer.ViewModel
         {
             FilePathModel.XmlPath = FileExplorer();
         }
+
         public void GetXmlDatas()
         {
             //xml파일만 진행됨(빈파일도 X)
@@ -190,10 +271,11 @@ namespace PNID_Viewer.ViewModel
             }
 
             ReadXml(FilePathModel.XmlPath);
-
-
+            
         }
+
         //Xml의 정보를 읽음
+        int tempColor = 0;
         private void ReadXml(string filePath)
         {
             //TODO해결: XmlDatas에 같은 게 들어감 -> DataGrid문제X, 모델 깊은 복사
@@ -201,6 +283,34 @@ namespace PNID_Viewer.ViewModel
             string _width = "";
             string _height = "";
             string _depth = "";
+            string colorinfo = "";
+
+            if (tempColor == 0)
+                colorinfo = "Red";
+
+            else if (tempColor == 1)
+                colorinfo = "RoyalBlue";
+
+            else if (tempColor == 2)
+                colorinfo = "Green";
+
+            else if (tempColor == 3)
+                colorinfo = "Purple";
+
+            else if (tempColor == 4)
+                colorinfo = "Coral";
+
+            else if (tempColor == 5)
+                colorinfo = "Navy";
+
+            else if (tempColor == 6)
+                colorinfo = "SpringGreen";
+
+            tempColor++;
+
+            if (tempColor == 7)
+                tempColor = 0;
+
             using (XmlReader reader = XmlReader.Create(filePath))
             {
                 while (reader.Read())
@@ -265,7 +375,7 @@ namespace PNID_Viewer.ViewModel
                                 temp.Ymax = XmlModel.Ymax;
                                 temp.RectangleWidth = XmlModel.RectangleWidth;
                                 temp.RectangleHeight = XmlModel.RectangleHeight;
-
+                                temp.Color = colorinfo;
                                 XmlDatas.Add(temp);
                                 break;
                         }
