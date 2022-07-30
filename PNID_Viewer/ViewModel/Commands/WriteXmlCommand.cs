@@ -26,7 +26,8 @@ namespace PNID_Viewer.ViewModel.Commands
 
         public void Execute(object parameter)
         {
-            VM.WriteXml();
+            String cb = (String)parameter;
+            VM.WriteXml(cb);
         }
     }
 }

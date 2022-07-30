@@ -31,13 +31,14 @@ namespace PNID_Viewer.ViewModel
         public ObservableCollection<XmlModel> XmlDatas { get; set; }
         public ObservableCollection<XmlModel> CheckedXmlDatas { get; set; }
         public ObservableCollection<XmlModel> ViewXmlDatas { get; set; }
-        public ObservableCollection<XmlModel> tempCheckedXmlDatas { get; set; }
         public ObservableCollection<XmlModel> TempXmlDatas { get; set; }
+        
 
         //순서대로 xml을 열고, xml파일을 내보내고, 리스트 체크 여부를 알기 위한 것
         public OpenXmlCommand OpenXmlCommand { get; set; }
         public WriteXmlCommand WriteXmlCommand { get; set; }
         public IsCheckedCommand IsCheckedCommand { get; set; }
+        public ViewButtonCommand ViewButtonCommand { get; set; }
 
         //생성자
         public ViewerVM()
@@ -51,15 +52,13 @@ namespace PNID_Viewer.ViewModel
             XmlDatas = new ObservableCollection<XmlModel>();
             CheckedXmlDatas = new ObservableCollection<XmlModel>();
             ViewXmlDatas = new ObservableCollection<XmlModel>();
-            tempCheckedXmlDatas = new ObservableCollection<XmlModel>();
             CheckedXmlDatas.CollectionChanged += OnCollectionChanged;
             ViewXmlDatas.CollectionChanged += OnCollectionChanged;
-            tempCheckedXmlDatas.CollectionChanged += OnCollectionChanged;
-
 
             OpenXmlCommand = new OpenXmlCommand(this);
             WriteXmlCommand = new WriteXmlCommand(this);
             IsCheckedCommand = new IsCheckedCommand(this);
+            ViewButtonCommand = new ViewButtonCommand(this);
 
             this.MouseLeftButtonDown += OnMouseLeftButtonDownCommand;
             this.MouseMove += OnMouseMoveCommand ;
@@ -75,7 +74,8 @@ namespace PNID_Viewer.ViewModel
             {
                 XmlModel temp = new XmlModel();
                 start = e.GetPosition((IInputElement)sender);
-                tempCheckedXmlDatas.Insert(0, temp);
+                CheckedXmlDatas.Insert(0, temp);
+                XmlDatas.Insert(0, temp);
                 tempNum = 1;
             }
 
@@ -84,8 +84,8 @@ namespace PNID_Viewer.ViewModel
                 end = e.GetPosition((IInputElement)sender);
 
                 XmlModel temp = new XmlModel();
-                temp.XmlFilename = CheckedXmlDatas[0].XmlFilename;
-                temp.Color = CheckedXmlDatas[0].Color;
+                temp.XmlFilename = ViewXmlDatas[0].XmlFilename;
+                temp.Color = ViewXmlDatas[0].Color;
 
                 if (start.X > end.X)
                 {
@@ -112,8 +112,9 @@ namespace PNID_Viewer.ViewModel
                 temp.RectangleWidth = temp.Xmax - temp.Xmin;
                 temp.RectangleHeight = temp.Ymax - temp.Ymin;
 
-                tempCheckedXmlDatas[0] = temp;
-                CheckedXmlDatas.Insert(0, temp);
+                XmlDatas[0] = temp;
+                CheckedXmlDatas[0] = temp;
+                ViewXmlDatas.Insert(0, temp);
                 tempNum = -1;
             }
         }
@@ -125,7 +126,8 @@ namespace PNID_Viewer.ViewModel
                 end = e.GetPosition((IInputElement)sender);
 
                 XmlModel temp = new XmlModel();
-                temp.Color = CheckedXmlDatas[0].Color;
+                temp.XmlFilename = ViewXmlDatas[0].XmlFilename;
+                temp.Color = ViewXmlDatas[0].Color;
 
                 if (start.X > end.X)
                 {
@@ -152,7 +154,8 @@ namespace PNID_Viewer.ViewModel
 
                 temp.RectangleWidth = temp.Xmax - temp.Xmin;
                 temp.RectangleHeight = temp.Ymax - temp.Ymin;
-                tempCheckedXmlDatas[0]=temp;
+                CheckedXmlDatas[0]=temp;
+                XmlDatas[0] = temp;
             }
         }
 
@@ -176,7 +179,6 @@ namespace PNID_Viewer.ViewModel
 
         public void ViewData(string _XmlFileName)
         {
-            MessageBox.Show("asdasd");
             ViewXmlDatas.Clear();
             //XmlDatas -> ViewXmlDaatas
             foreach (var item in XmlDatas)
@@ -190,22 +192,12 @@ namespace PNID_Viewer.ViewModel
 
         public void AddData(string _XmlFileName)
         {
-            TempXmlDatas = new ObservableCollection<XmlModel>();
             //XmlDatas -> CheckedXmlDatas
             foreach (var item in XmlDatas)
             {
                 if (item.XmlFilename.Equals(_XmlFileName))
                 {
                     CheckedXmlDatas.Add(item);
-                    tempCheckedXmlDatas.Add(item);
-                    TempXmlDatas.Add(item);
-                }
-            }
-            foreach (var item in TempXmlDatas)
-            {
-                if (item.XmlFilename.Equals(_XmlFileName))
-                {
-                    XmlDatas.Remove(item);
                 }
             }
         }
@@ -213,22 +205,20 @@ namespace PNID_Viewer.ViewModel
         public void DeleteData(string _XmlFileName)
         {
             TempXmlDatas = new ObservableCollection<XmlModel>();
-            //CheckedXmlDatas -> XmlDatas
             foreach (var item in CheckedXmlDatas)
             {
                 if (item.XmlFilename.Equals(_XmlFileName))
                 {
-                    XmlDatas.Add(item);
                     TempXmlDatas.Add(item);
                 }
             }
 
+            //CheckedXmlDatas -> XmlDatas
             foreach (var item in TempXmlDatas)
             {
                 if (item.XmlFilename.Equals(_XmlFileName))
                 {
                     CheckedXmlDatas.Remove(item);
-                    tempCheckedXmlDatas.Remove(item);
                 }
             }
         }
@@ -238,6 +228,8 @@ namespace PNID_Viewer.ViewModel
         {
             FilePathModel.XmlPath = FileExplorer();
         }
+
+        int tempFilenum = -1;
 
         public void GetXmlDatas()
         {
@@ -271,7 +263,8 @@ namespace PNID_Viewer.ViewModel
             }
 
             ReadXml(FilePathModel.XmlPath);
-            
+
+            tempFilenum = 1;
         }
 
         //Xml의 정보를 읽음
@@ -377,13 +370,15 @@ namespace PNID_Viewer.ViewModel
                                 temp.RectangleHeight = XmlModel.RectangleHeight;
                                 temp.Color = colorinfo;
                                 XmlDatas.Add(temp);
+                                if (tempFilenum == -1)
+                                    ViewXmlDatas.Add(temp);
                                 break;
                         }
                     }
                 }
             }
         }
-        public void WriteXml()
+        public void WriteXml(string _XmlFileName)
         {
             //주의) 1개만 체크되어있어야함.
             string str;
@@ -410,28 +405,33 @@ namespace PNID_Viewer.ViewModel
             };
             using (XmlWriter wr = XmlWriter.Create(str, settings))
             {
+                
                 wr.WriteStartDocument();
                 wr.WriteStartElement("annotation");
-                //TODO: CheckedXmlDatas에 1개의 xml정보만 들어와있어야함
-                wr.WriteElementString("filmename", CheckedXmlDatas[0].Filename);
+
+                wr.WriteElementString("filmename", _XmlFileName);
                 wr.WriteStartElement("size");
-                wr.WriteElementString("width", CheckedXmlDatas[0].Width.ToString());
-                wr.WriteElementString("height", CheckedXmlDatas[0].Height.ToString());
-                wr.WriteElementString("depth", CheckedXmlDatas[0].Depth.ToString());
+
+                wr.WriteElementString("width", "9933");
+                wr.WriteElementString("height", "7016");
+                wr.WriteElementString("depth", "3");
                 wr.WriteEndElement();  //size
-                foreach (var item in CheckedXmlDatas)
+                foreach (var item in XmlDatas)
                 {
-                    wr.WriteStartElement("object");
-                    if (item.Name == null) item.Name = "_";
-                    wr.WriteElementString("name", item.Name);
-                    wr.WriteElementString("degree", item.Degree.ToString());
-                    wr.WriteStartElement("bndbox");
-                    wr.WriteElementString("xmin", item.Xmin.ToString());
-                    wr.WriteElementString("ymin", item.Ymin.ToString());
-                    wr.WriteElementString("xmax", item.Xmax.ToString());
-                    wr.WriteElementString("ymax", item.Ymax.ToString());
-                    wr.WriteEndElement();  //bndbox
-                    wr.WriteEndElement();  //object
+                    if (item.XmlFilename.Equals(_XmlFileName))
+                    {
+                        wr.WriteStartElement("object");
+                        if (item.Name == null) item.Name = "_";
+                        wr.WriteElementString("name", item.Name);
+                        wr.WriteElementString("degree", item.Degree.ToString());
+                        wr.WriteStartElement("bndbox");
+                        wr.WriteElementString("xmin", item.Xmin.ToString());
+                        wr.WriteElementString("ymin", item.Ymin.ToString());
+                        wr.WriteElementString("xmax", item.Xmax.ToString());
+                        wr.WriteElementString("ymax", item.Ymax.ToString());
+                        wr.WriteEndElement();  //bndbox
+                        wr.WriteEndElement();  //object
+                    }
                 }
                 wr.WriteEndElement();  //annotation
                 wr.WriteEndDocument();

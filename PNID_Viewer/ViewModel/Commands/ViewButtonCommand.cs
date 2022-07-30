@@ -9,7 +9,7 @@ using System.Windows;
 
 namespace PNID_Viewer.ViewModel.Commands
 {
-    class ViewButtonCommand : ICommand
+    public class ViewButtonCommand : ICommand
     {
         public ViewerVM VM { get; set; }
         public ViewButtonCommand(ViewerVM vm)
@@ -26,9 +26,8 @@ namespace PNID_Viewer.ViewModel.Commands
 
         public void Execute(object parameter)
         {
-            CheckBox cb = (CheckBox)parameter;
-            VM.ViewData(cb.Content.ToString());
-            MessageBox.Show("hehe");
+            String cb = (String)parameter;
+            VM.ViewData(cb);
         }
     }
 }
