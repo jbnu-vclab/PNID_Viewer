@@ -33,12 +33,10 @@ namespace PNID_Viewer.ViewModel
         public ObservableCollection<XmlModel> ViewXmlDatas { get; set; }
         public ObservableCollection<XmlModel> TempXmlDatas { get; set; }
         
-
-        //순서대로 xml을 열고, xml파일을 내보내고, 리스트 체크 여부를 알기 위한 것
-        public OpenXmlCommand OpenXmlCommand { get; set; }
-        public WriteXmlCommand WriteXmlCommand { get; set; }
-        public IsCheckedCommand IsCheckedCommand { get; set; }
-        public ViewButtonCommand ViewButtonCommand { get; set; }
+        public OpenXmlCommand OpenXmlCommand { get; set; }      //Xml을 열기
+        public WriteXmlCommand WriteXmlCommand { get; set; }    //Xml을 내보내기
+        public IsCheckedCommand IsCheckedCommand { get; set; }  //Xml을 Checkbox에서 선택하기
+        public ViewXmlCommand ViewXmlCommand { get; set; }      //Xml을 Datagrid에 띄우기
 
         //생성자
         public ViewerVM()
@@ -52,24 +50,24 @@ namespace PNID_Viewer.ViewModel
             XmlDatas = new ObservableCollection<XmlModel>();
             CheckedXmlDatas = new ObservableCollection<XmlModel>();
             ViewXmlDatas = new ObservableCollection<XmlModel>();
-            CheckedXmlDatas.CollectionChanged += OnCollectionChanged;
-            ViewXmlDatas.CollectionChanged += OnCollectionChanged;
 
             OpenXmlCommand = new OpenXmlCommand(this);
             WriteXmlCommand = new WriteXmlCommand(this);
             IsCheckedCommand = new IsCheckedCommand(this);
-            ViewButtonCommand = new ViewButtonCommand(this);
+            ViewXmlCommand = new ViewXmlCommand(this);
 
             this.MouseLeftButtonDown += OnMouseLeftButtonDownCommand;
             this.MouseMove += OnMouseMoveCommand ;
         }
 
-        Point start;
-        Point end;
-        int tempNum = -1;
+        Point start;       //Box의 시작점을 저장
+        Point end;         //Box의 끝점을 저장
+        int tempNum = -1;  //시작점이 찍혔는지 확인하는 변수
 
+        //Ctrl + 마우스 좌클릭
         public void OnMouseLeftButtonDownCommand(object sender, MouseButtonEventArgs e)
         {
+            //시작점을 찍을 때
             if (Keyboard.IsKeyDown(Key.LeftCtrl) && tempNum == -1)
             {
                 XmlModel temp = new XmlModel();
@@ -79,6 +77,7 @@ namespace PNID_Viewer.ViewModel
                 tempNum = 1;
             }
 
+            //끝점을 찍을 때
             else if (Keyboard.IsKeyDown(Key.LeftCtrl) && tempNum == 1)
             {
                 end = e.GetPosition((IInputElement)sender);
@@ -119,9 +118,10 @@ namespace PNID_Viewer.ViewModel
             }
         }
 
+        //Box의 시작점이 찍히고 마우스가 움직일 때
         public void OnMouseMoveCommand(object sender, MouseEventArgs e)
         {
-            if (tempNum==1)
+            if (tempNum==1) //시작점이 찍혔을 때만
             {
                 end = e.GetPosition((IInputElement)sender);
 
@@ -159,24 +159,7 @@ namespace PNID_Viewer.ViewModel
             }
         }
 
-        //CheckedXmlDatas의 변화
-        private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            //행 삭제할 때
-            if (e.Action == NotifyCollectionChangedAction.Remove)
-            {
-                ObservableCollection<XmlModel> xm = (ObservableCollection<XmlModel>)sender;
-            }
-            //행 추가할 때
-            if (e.Action == NotifyCollectionChangedAction.Add)
-            {
-
-            }
-        }
-
-        //XmlDatas에서 원하는 정보만을 CheckedXmlDatas에 추가/제거하는 함수
-        //IsCheckedCommand에서 사용
-
+        //ViewXmlCommand에서 사용
         public void ViewData(string _XmlFileName)
         {
             ViewXmlDatas.Clear();
@@ -190,9 +173,9 @@ namespace PNID_Viewer.ViewModel
             }
         }
 
+        //IsCheckedCommand에서 사용
         public void AddData(string _XmlFileName)
         {
-            //XmlDatas -> CheckedXmlDatas
             foreach (var item in XmlDatas)
             {
                 if (item.XmlFilename.Equals(_XmlFileName))
@@ -212,8 +195,7 @@ namespace PNID_Viewer.ViewModel
                     TempXmlDatas.Add(item);
                 }
             }
-
-            //CheckedXmlDatas -> XmlDatas
+            
             foreach (var item in TempXmlDatas)
             {
                 if (item.XmlFilename.Equals(_XmlFileName))
@@ -229,7 +211,7 @@ namespace PNID_Viewer.ViewModel
             FilePathModel.XmlPath = FileExplorer();
         }
 
-        int tempFilenum = -1;
+        int tempFilenum = -1;   //Xml 파일을 하나라도 열었는지 확인하는 변수
 
         public void GetXmlDatas()
         {
@@ -267,8 +249,10 @@ namespace PNID_Viewer.ViewModel
             tempFilenum = 1;
         }
 
+
+        int tempColor = 0;  //몇 번 째로 열린 파일인지 확인하기 위한 변수
+
         //Xml의 정보를 읽음
-        int tempColor = 0;
         private void ReadXml(string filePath)
         {
             //TODO해결: XmlDatas에 같은 게 들어감 -> DataGrid문제X, 모델 깊은 복사
@@ -278,7 +262,7 @@ namespace PNID_Viewer.ViewModel
             string _depth = "";
             string colorinfo = "";
 
-            if (tempColor == 0)
+            if (tempColor == 0)     //열린 순서에 따라 색깔 구분
                 colorinfo = "Red";
 
             else if (tempColor == 1)
@@ -332,9 +316,7 @@ namespace PNID_Viewer.ViewModel
                                 XmlModel.Width = Convert.ToInt32(_width);
                                 XmlModel.Height = Convert.ToInt32(_height);
                                 XmlModel.Depth = Convert.ToInt32(_depth);
-
                                 XmlModel.XmlFilename = FindNameToXmlPath(FilePathModel.XmlPath);
-
                                 break;
                             case "degree":
                                 XmlModel.Degree = Convert.ToDouble(reader.ReadString());
@@ -370,30 +352,29 @@ namespace PNID_Viewer.ViewModel
                                 temp.RectangleHeight = XmlModel.RectangleHeight;
                                 temp.Color = colorinfo;
                                 XmlDatas.Add(temp);
-                                if (tempFilenum == -1)
+
+                                if (tempFilenum == -1)      //처음 불러오는 Xml이라면 Datagrid에 바로 보여줌
                                     ViewXmlDatas.Add(temp);
+
                                 break;
                         }
                     }
                 }
             }
         }
+
+        //WriteXmlCommand에서 사용
         public void WriteXml(string _XmlFileName)
         {
-            //주의) 1개만 체크되어있어야함.
             string str;
             SaveFileDialog dialog = new SaveFileDialog();
             dialog.Filter = "Xml Files(*.xml;)|*.xml;|All files (*.*)|*.*";
+
             if (dialog.ShowDialog() == true)
-            {
                 str = dialog.FileName;
-                //MessageBox.Show(str);
-            }
+
             else
-            {
-                //MessageBox.Show("!");
                 return;
-            }
 
             XmlWriterSettings settings = new XmlWriterSettings
             {
@@ -403,20 +384,20 @@ namespace PNID_Viewer.ViewModel
                 NewLineHandling = NewLineHandling.Replace,
                 OmitXmlDeclaration = false
             };
+
             using (XmlWriter wr = XmlWriter.Create(str, settings))
             {
                 
                 wr.WriteStartDocument();
                 wr.WriteStartElement("annotation");
-
                 wr.WriteElementString("filmename", _XmlFileName);
                 wr.WriteStartElement("size");
-
                 wr.WriteElementString("width", "9933");
                 wr.WriteElementString("height", "7016");
                 wr.WriteElementString("depth", "3");
                 wr.WriteEndElement();  //size
-                foreach (var item in XmlDatas)
+
+                foreach (var item in XmlDatas)  //XmlDatas에서 전달된 파일명과 같은 파일명을 가진 데이터들만 불러옴
                 {
                     if (item.XmlFilename.Equals(_XmlFileName))
                     {
@@ -438,7 +419,7 @@ namespace PNID_Viewer.ViewModel
             }
         }
 
-        //주의)이 함수는 xml 불러올 떄만 사용됨. image불러오는 함수는 OpenImageCommand에서 작성됨.
+        //주의)이 함수는 xml 불러올 떄만 사용됨. image불러오는 함수는 OpenImageCommand에 작성됨.
         private string FileExplorer()
         {
             OpenFileDialog dig = new OpenFileDialog();

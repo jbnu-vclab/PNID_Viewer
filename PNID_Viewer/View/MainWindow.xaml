@@ -41,13 +41,10 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-
-
             <vm:ZoomBorder x:Name="border" ClipToBounds="True" Background="Gray">
                 <ItemsControl DataContext="{Binding Source={StaticResource vm}}" ItemsSource="{Binding Path=CheckedXmlDatas, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True, UpdateSourceTrigger=PropertyChanged}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <!--TODO: 캔버스 사이즈 바인딩-->
                             <Canvas MinHeight="1000" MinWidth="1000" Height="7016" Width="9933" >
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="MouseLeftButtonDown">
@@ -97,7 +94,7 @@
                                 <CheckBox Name="CB" Content="{Binding}" Command="{Binding Source={StaticResource vm}, Path=IsCheckedCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}">
                                     <CheckBox.ContextMenu>
                                         <ContextMenu StaysOpen="true">
-                                            <MenuItem Header="보기" Command="{Binding Source={StaticResource vm}, Path=ViewButtonCommand}" CommandParameter="{Binding}"/>
+                                            <MenuItem Header="보기" Command="{Binding Source={StaticResource vm}, Path=ViewXmlCommand}" CommandParameter="{Binding}"/>
                                             <MenuItem Header="내보내기" Command="{Binding Source={StaticResource vm}, Path=WriteXmlCommand}" CommandParameter="{Binding}"/>
                                         </ContextMenu>
                                     </CheckBox.ContextMenu>

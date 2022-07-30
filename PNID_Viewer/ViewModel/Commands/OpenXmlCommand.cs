@@ -30,7 +30,7 @@ namespace PNID_Viewer.ViewModel.Commands
 
         public void Execute(object parameter)
         {
-            //VM의 함수 호출
+            //VM의 파일 여는 함수 호출
             VM.OpenXml();
             //XML 불러오기 & XML 정보 저장
             VM.GetXmlDatas();

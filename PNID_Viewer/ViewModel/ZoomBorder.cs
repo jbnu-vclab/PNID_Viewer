@@ -5,8 +5,11 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
+//Canvas의 줌/패닝/화면 이동을 위한 클래스
 //https://stackoverflow.com/questions/741956/pan-zoom-image 참조
-//TODO: 큰 이미니는 줌이 덜 되는 듯함
+
+//TODO: 큰 이미지는 줌이 덜 되는 듯함
+
 namespace PNID_Viewer.ViewModel
 {
     public class ZoomBorder : Border
@@ -60,20 +63,19 @@ namespace PNID_Viewer.ViewModel
               child_PreviewMouseRightButtonDown);
             }
         }
-
-        public void Reset()
+        public void Reset()     //이 부분을 수정하면 줌/패닝 기본값 변경 가능
         {
             if (child != null)
             {
                 // reset zoom
                 var st = GetScaleTransform(child);
-                st.ScaleX = 1.0;
-                st.ScaleY = 1.0;
+                st.ScaleX = 0.15;
+                st.ScaleY = 0.15;
 
                 // reset pan
                 var tt = GetTranslateTransform(child);
-                tt.X = 0.0;
-                tt.Y = 0.0;
+                tt.X = -250.0;
+                tt.Y = -200.0;
             }
         }
 
@@ -86,8 +88,8 @@ namespace PNID_Viewer.ViewModel
                 var st = GetScaleTransform(child);
                 var tt = GetTranslateTransform(child);
 
-                double zoom = e.Delta > 0 ? .05 : -.05;
-                if (!(e.Delta > 0) && (st.ScaleX <= .15 || st.ScaleY <= .15))
+                double zoom = e.Delta > 0 ? .05 : -.05;     
+                if (!(e.Delta > 0) && (st.ScaleX <= .15 || st.ScaleY <= .15))   //이 부분을 수정하면 줌/패닝 배율 수정 가능
                     return;
 
                 Point relative = e.GetPosition(child);
@@ -128,6 +130,7 @@ namespace PNID_Viewer.ViewModel
 
         void child_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
+            this.Reset();
         }
 
         private void child_MouseMove(object sender, MouseEventArgs e)

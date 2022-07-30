@@ -9,10 +9,10 @@ using System.Windows;
 
 namespace PNID_Viewer.ViewModel.Commands
 {
-    public class ViewButtonCommand : ICommand
+    public class ViewXmlCommand : ICommand
     {
         public ViewerVM VM { get; set; }
-        public ViewButtonCommand(ViewerVM vm)
+        public ViewXmlCommand(ViewerVM vm)
         {
             VM = vm;
         }
@@ -26,6 +26,7 @@ namespace PNID_Viewer.ViewModel.Commands
 
         public void Execute(object parameter)
         {
+            //Listview에서 우클릭 시 나오는 '보기' 메뉴 클릭했을 때
             String cb = (String)parameter;
             VM.ViewData(cb);
         }
