@@ -24,7 +24,6 @@ namespace PNID_Viewer
         public MainWindow()
         {
             InitializeComponent();
-            this.DataContext = new ViewerVM();
         }
 
     }
