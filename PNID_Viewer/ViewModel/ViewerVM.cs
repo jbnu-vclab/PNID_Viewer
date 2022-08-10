@@ -36,8 +36,7 @@ namespace PNID_Viewer.ViewModel
         public OpenXmlCommand OpenXmlCommand { get; set; }              //Xml을 열기
         public WriteXmlCommand WriteXmlCommand { get; set; }            //Xml을 내보내기
         public IsCheckedCommand IsCheckedCommand { get; set; }          //Xml을 Checkbox에서 선택하기
-        public ViewXmlCommand ViewXmlCommand { get; set; }              //Xml을 Datagrid에 띄우기
-        public ViewXmlCommand SaveButtonClickCommand { get; set; }      //Datagrid 수정사항 반영하기
+        public SaveButtonClickCommand SaveButtonClickCommand { get; set; }      //Datagrid 수정사항 반영하기
 
         //생성자
         public ViewerVM()
@@ -55,8 +54,7 @@ namespace PNID_Viewer.ViewModel
             OpenXmlCommand = new OpenXmlCommand(this);
             WriteXmlCommand = new WriteXmlCommand(this);
             IsCheckedCommand = new IsCheckedCommand(this);
-            ViewXmlCommand = new ViewXmlCommand(this);
-            SaveButtonClickCommand = new ViewXmlCommand(this);
+            SaveButtonClickCommand = new SaveButtonClickCommand(this);
 
             this.MouseLeftButtonDown += OnMouseLeftButtonDownCommand;
             this.MouseMove += OnMouseMoveCommand;
@@ -87,29 +85,11 @@ namespace PNID_Viewer.ViewModel
                 XmlModel temp = new XmlModel();
                 temp.XmlFilename = ViewXmlDatas[0].XmlFilename;
                 temp.Color = ViewXmlDatas[0].Color;
+                temp.Xmax = Math.Max((int)start.X, (int)end.X);
+                temp.Xmin = Math.Min((int)start.X, (int)end.X);
+                temp.Ymax = Math.Max((int)start.Y, (int)end.Y);
+                temp.Ymin = Math.Min((int)start.Y, (int)end.Y);
 
-                if (start.X > end.X)
-                {
-                    temp.Xmax = (int)start.X;
-                    temp.Xmin = (int)end.X;
-                }
-
-                else
-                {
-                    temp.Xmax = (int)end.X;
-                    temp.Xmin = (int)start.X;
-                }
-
-                if (start.Y > end.Y)
-                {
-                    temp.Ymax = (int)start.Y;
-                    temp.Ymin = (int)end.Y;
-                }
-                else
-                {
-                    temp.Ymax = (int)end.Y;
-                    temp.Ymin = (int)start.Y;
-                }
                 temp.RectangleWidth = temp.Xmax - temp.Xmin;
                 temp.RectangleHeight = temp.Ymax - temp.Ymin;
 
@@ -131,28 +111,10 @@ namespace PNID_Viewer.ViewModel
                 temp.XmlFilename = ViewXmlDatas[0].XmlFilename;
                 temp.Color = ViewXmlDatas[0].Color;
 
-                if (start.X > end.X)
-                {
-                    temp.Xmax = (int)start.X;
-                    temp.Xmin = (int)end.X;
-                }
-
-                else
-                {
-                    temp.Xmax = (int)end.X;
-                    temp.Xmin = (int)start.X;
-                }
-
-                if (start.Y > end.Y)
-                {
-                    temp.Ymax = (int)start.Y;
-                    temp.Ymin = (int)end.Y;
-                }
-                else
-                {
-                    temp.Ymax = (int)end.Y;
-                    temp.Ymin = (int)start.Y;
-                }
+                temp.Xmax = Math.Max((int)start.X, (int)end.X);
+                temp.Xmin = Math.Min((int)start.X, (int)end.X);
+                temp.Ymax = Math.Max((int)start.Y, (int)end.Y);
+                temp.Ymin = Math.Min((int)start.Y, (int)end.Y);
 
                 temp.RectangleWidth = temp.Xmax - temp.Xmin;
                 temp.RectangleHeight = temp.Ymax - temp.Ymin;
@@ -177,9 +139,10 @@ namespace PNID_Viewer.ViewModel
 
         public void SaveButtonClick()
         {
+            //TODO : CheckedXmlDatas같이 수정하는부분 다시 짜기
             TempXmlDatas = new ObservableCollection<XmlModel>();
             string _XmlFileName = ViewXmlDatas[0].XmlFilename;
-            foreach (var item in ViewXmlDatas)
+            foreach (var item in XmlDatas)
             {
                 if (item.XmlFilename.Equals(_XmlFileName))
                 {
@@ -191,6 +154,7 @@ namespace PNID_Viewer.ViewModel
                 if (item.XmlFilename.Equals(_XmlFileName))
                 {
                     XmlDatas.Remove(item);
+                    CheckedXmlDatas.Remove(item);
                 }
             }
             foreach (var item in ViewXmlDatas)
@@ -198,6 +162,7 @@ namespace PNID_Viewer.ViewModel
                 if (item.XmlFilename.Equals(_XmlFileName))
                 {
                     XmlDatas.Add(item);
+                    CheckedXmlDatas.Add(item);
                 }
             }
         }
@@ -211,6 +176,7 @@ namespace PNID_Viewer.ViewModel
             {
                 if (item.XmlFilename.Equals(_XmlFileName))
                 {
+                    
                     CheckedXmlDatas.Add(item);
                 }
             }
@@ -429,7 +395,7 @@ namespace PNID_Viewer.ViewModel
                 OmitXmlDeclaration = false
             };
 
-            string _Filename = "";
+            string _Filename = "_";
             string _Width = "";
             string _Height = "";
             string _Depth = "";
@@ -437,16 +403,13 @@ namespace PNID_Viewer.ViewModel
             {
                 if (item.XmlFilename.Equals(_XmlFileName))
                 {
-                    if (item.Filename.Equals("") ||
-                        item.Width.ToString().Equals("") ||
-                        item.Height.ToString().Equals("") ||
-                        item.Depth.ToString().Equals(""))
-                        continue;
+                    //주의) 기존의 것이 하나 이상 남아있어야 함
+                    //if (item.Filename.Equals(null)) continue; 
                     _Filename = item.Filename;
                     _Width = item.Width.ToString();
                     _Height = item.Height.ToString();
                     _Depth = item.Depth.ToString();
-                    break;
+                    //break;
                 }
             }
 
