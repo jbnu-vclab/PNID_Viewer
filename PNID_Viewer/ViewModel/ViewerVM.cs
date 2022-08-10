@@ -30,12 +30,14 @@ namespace PNID_Viewer.ViewModel
         //파일을 열면 XmlDatas에 전부 추가됨, 리스트에서 체크된 파일만 CheckedXmlDatas에 추가되어 화면에 보임
         public ObservableCollection<XmlModel> XmlDatas { get; set; }
         public ObservableCollection<XmlModel> CheckedXmlDatas { get; set; }
+        public ObservableCollection<XmlModel> ViewXmlDatas { get; set; }
         public ObservableCollection<XmlModel> TempXmlDatas { get; set; }
 
-        //순서대로 xml을 열고, xml파일을 내보내고, 리스트 체크 여부를 알기 위한 것
-        public OpenXmlCommand OpenXmlCommand { get; set; }
-        public WriteXmlCommand WriteXmlCommand { get; set; }
-        public IsCheckedCommand IsCheckedCommand { get; set; }
+        public OpenXmlCommand OpenXmlCommand { get; set; }              //Xml을 열기
+        public WriteXmlCommand WriteXmlCommand { get; set; }            //Xml을 내보내기
+        public IsCheckedCommand IsCheckedCommand { get; set; }          //Xml을 Checkbox에서 선택하기
+        public ViewXmlCommand ViewXmlCommand { get; set; }              //Xml을 Datagrid에 띄우기
+        public ViewXmlCommand SaveButtonClickCommand { get; set; }      //Datagrid 수정사항 반영하기
 
         //생성자
         public ViewerVM()
@@ -48,64 +50,139 @@ namespace PNID_Viewer.ViewModel
 
             XmlDatas = new ObservableCollection<XmlModel>();
             CheckedXmlDatas = new ObservableCollection<XmlModel>();
+            ViewXmlDatas = new ObservableCollection<XmlModel>();
 
             OpenXmlCommand = new OpenXmlCommand(this);
             WriteXmlCommand = new WriteXmlCommand(this);
             IsCheckedCommand = new IsCheckedCommand(this);
+            ViewXmlCommand = new ViewXmlCommand(this);
+            SaveButtonClickCommand = new ViewXmlCommand(this);
 
             this.MouseLeftButtonDown += OnMouseLeftButtonDownCommand;
-            this.MouseRightButtonDown += OnMouseRightButtonDownCommand;
+            this.MouseMove += OnMouseMoveCommand;
         }
 
-        Point start;
-        Point end;
+        Point start;       //Box의 시작점을 저장
+        Point end;         //Box의 끝점을 저장
+        int tempNum = -1;  //시작점이 찍혔는지 확인하는 변수
 
+        //Ctrl + 마우스 좌클릭
         public void OnMouseLeftButtonDownCommand(object sender, MouseButtonEventArgs e)
         {
-            if (Keyboard.IsKeyDown(Key.LeftCtrl))
+            //시작점을 찍을 때
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) && tempNum == -1)
             {
+                XmlModel temp = new XmlModel();
                 start = e.GetPosition((IInputElement)sender);
+                CheckedXmlDatas.Insert(0, temp);
+                XmlDatas.Insert(0, temp);
+                tempNum = 1;
             }
-        }
 
-        public void OnMouseRightButtonDownCommand(object sender, MouseButtonEventArgs e)
-        {
-            if (Keyboard.IsKeyDown(Key.LeftCtrl))
+            //끝점을 찍을 때
+            else if (Keyboard.IsKeyDown(Key.LeftCtrl) && tempNum == 1)
             {
                 end = e.GetPosition((IInputElement)sender);
 
                 XmlModel temp = new XmlModel();
-                temp.XmlFilename = CheckedXmlDatas[0].XmlFilename;
-                temp.Xmax = (int)end.X;
-                temp.Xmin = (int)start.X;
-                temp.Ymax = (int)end.Y;
-                temp.Ymin = (int)start.Y;
+                temp.XmlFilename = ViewXmlDatas[0].XmlFilename;
+                temp.Color = ViewXmlDatas[0].Color;
 
-                if (temp.Xmax > temp.Xmin)
-                    temp.RectangleWidth = temp.Xmax - temp.Xmin;
-                else
-                    temp.RectangleWidth = temp.Xmin - temp.Xmax;
+                if (start.X > end.X)
+                {
+                    temp.Xmax = (int)start.X;
+                    temp.Xmin = (int)end.X;
+                }
 
-                if (temp.Ymax > temp.Ymin)
-                    temp.RectangleHeight = temp.Ymax - temp.Ymin;
                 else
-                    temp.RectangleHeight = temp.Ymin - temp.Ymax;
-                CheckedXmlDatas.Add(temp);
+                {
+                    temp.Xmax = (int)end.X;
+                    temp.Xmin = (int)start.X;
+                }
+
+                if (start.Y > end.Y)
+                {
+                    temp.Ymax = (int)start.Y;
+                    temp.Ymin = (int)end.Y;
+                }
+                else
+                {
+                    temp.Ymax = (int)end.Y;
+                    temp.Ymin = (int)start.Y;
+                }
+                temp.RectangleWidth = temp.Xmax - temp.Xmin;
+                temp.RectangleHeight = temp.Ymax - temp.Ymin;
+
+                XmlDatas[0] = temp;
+                CheckedXmlDatas[0] = temp;
+                ViewXmlDatas.Insert(0, temp);
+                tempNum = -1;
             }
         }
 
-
-        //XmlDatas에서 원하는 정보만을 CheckedXmlDatas에 추가/제거하는 함수
-        //IsCheckedCommand에서 사용
-        public void AddData(string _XmlFileName)
+        //Box의 시작점이 찍히고 마우스가 움직일 때
+        public void OnMouseMoveCommand(object sender, MouseEventArgs e)
         {
-            TempXmlDatas = new ObservableCollection<XmlModel>();
-            //XmlDatas -> CheckedXmlDatas
+            if (tempNum == 1) //시작점이 찍혔을 때만
+            {
+                end = e.GetPosition((IInputElement)sender);
+
+                XmlModel temp = new XmlModel();
+                temp.XmlFilename = ViewXmlDatas[0].XmlFilename;
+                temp.Color = ViewXmlDatas[0].Color;
+
+                if (start.X > end.X)
+                {
+                    temp.Xmax = (int)start.X;
+                    temp.Xmin = (int)end.X;
+                }
+
+                else
+                {
+                    temp.Xmax = (int)end.X;
+                    temp.Xmin = (int)start.X;
+                }
+
+                if (start.Y > end.Y)
+                {
+                    temp.Ymax = (int)start.Y;
+                    temp.Ymin = (int)end.Y;
+                }
+                else
+                {
+                    temp.Ymax = (int)end.Y;
+                    temp.Ymin = (int)start.Y;
+                }
+
+                temp.RectangleWidth = temp.Xmax - temp.Xmin;
+                temp.RectangleHeight = temp.Ymax - temp.Ymin;
+                CheckedXmlDatas[0] = temp;
+                XmlDatas[0] = temp;
+            }
+        }
+
+        //ViewXmlCommand에서 사용
+        public void ViewData(string _XmlFileName)
+        {
+            ViewXmlDatas.Clear();
+            //XmlDatas -> ViewXmlDaatas
             foreach (var item in XmlDatas)
             {
                 if (item.XmlFilename.Equals(_XmlFileName))
                 {
-                    CheckedXmlDatas.Add(item);
+                    ViewXmlDatas.Add(item);
+                }
+            }
+        }
+
+        public void SaveButtonClick()
+        {
+            TempXmlDatas = new ObservableCollection<XmlModel>();
+            string _XmlFileName = ViewXmlDatas[0].XmlFilename;
+            foreach (var item in ViewXmlDatas)
+            {
+                if (item.XmlFilename.Equals(_XmlFileName))
+                {
                     TempXmlDatas.Add(item);
                 }
             }
@@ -116,17 +193,52 @@ namespace PNID_Viewer.ViewModel
                     XmlDatas.Remove(item);
                 }
             }
+            foreach (var item in ViewXmlDatas)
+            {
+                if (item.XmlFilename.Equals(_XmlFileName))
+                {
+                    XmlDatas.Add(item);
+                }
+            }
+        }
+
+        //XmlDatas에서 원하는 정보만을 CheckedXmlDatas에 추가/제거하는 함수
+        //IsCheckedCommand에서 사용
+        public void AddData(string _XmlFileName)
+        {
+            //XmlDatas -> CheckedXmlDatas
+            foreach (var item in XmlDatas)
+            {
+                if (item.XmlFilename.Equals(_XmlFileName))
+                {
+                    CheckedXmlDatas.Add(item);
+                }
+            }
+
         }
         public void DeleteData(string _XmlFileName)
         {
             TempXmlDatas = new ObservableCollection<XmlModel>();
-            //CheckedXmlDatas -> XmlDatas
+
+            foreach (var item in CheckedXmlDatas)
+            {
+                if (item.XmlFilename.Equals(_XmlFileName))
+                {
+                    TempXmlDatas.Add(item);
+                }
+            }
+            foreach (var item in TempXmlDatas)
+            {
+                if (item.XmlFilename.Equals(_XmlFileName))
+                {
+                    XmlDatas.Remove(item);
+                }
+            }
             foreach (var item in CheckedXmlDatas)
             {
                 if (item.XmlFilename.Equals(_XmlFileName))
                 {
                     XmlDatas.Add(item);
-                    TempXmlDatas.Add(item);
                 }
             }
             foreach (var item in TempXmlDatas)
@@ -178,6 +290,10 @@ namespace PNID_Viewer.ViewModel
 
 
         }
+
+        int tempFilenum = -1;   //Xml 파일을 하나라도 열었는지 확인하는 변수
+        int tempColor = 0;  //몇 번 째로 열린 파일인지 확인하기 위한 변수
+
         //Xml의 정보를 읽음
         private void ReadXml(string filePath)
         {
@@ -186,6 +302,34 @@ namespace PNID_Viewer.ViewModel
             string _width = "";
             string _height = "";
             string _depth = "";
+            string colorinfo = "";
+
+            if (tempColor == 0)     //열린 순서에 따라 색깔 구분
+                colorinfo = "Red";
+
+            else if (tempColor == 1)
+                colorinfo = "RoyalBlue";
+
+            else if (tempColor == 2)
+                colorinfo = "Green";
+
+            else if (tempColor == 3)
+                colorinfo = "Purple";
+
+            else if (tempColor == 4)
+                colorinfo = "Coral";
+
+            else if (tempColor == 5)
+                colorinfo = "Navy";
+
+            else if (tempColor == 6)
+                colorinfo = "SpringGreen";
+
+            tempColor++;
+
+            if (tempColor == 7)
+                tempColor = 0;
+
             using (XmlReader reader = XmlReader.Create(filePath))
             {
                 while (reader.Read())
@@ -214,9 +358,7 @@ namespace PNID_Viewer.ViewModel
                                 XmlModel.Width = Convert.ToInt32(_width);
                                 XmlModel.Height = Convert.ToInt32(_height);
                                 XmlModel.Depth = Convert.ToInt32(_depth);
-
                                 XmlModel.XmlFilename = FindNameToXmlPath(FilePathModel.XmlPath);
-
                                 break;
                             case "degree":
                                 XmlModel.Degree = Convert.ToDouble(reader.ReadString());
@@ -250,15 +392,20 @@ namespace PNID_Viewer.ViewModel
                                 temp.Ymax = XmlModel.Ymax;
                                 temp.RectangleWidth = XmlModel.RectangleWidth;
                                 temp.RectangleHeight = XmlModel.RectangleHeight;
-
+                                temp.Color = colorinfo;
                                 XmlDatas.Add(temp);
+
+                                if (tempFilenum == -1)      //처음 불러오는 Xml이라면 Datagrid에 바로 보여줌
+                                    ViewXmlDatas.Add(temp);
+
                                 break;
                         }
                     }
                 }
             }
         }
-        public void WriteXml()
+
+        public void WriteXml(string _XmlFileName)
         {
             //주의) 1개만 체크되어있어야함.
             string str;
@@ -267,11 +414,9 @@ namespace PNID_Viewer.ViewModel
             if (dialog.ShowDialog() == true)
             {
                 str = dialog.FileName;
-                //MessageBox.Show(str);
             }
             else
             {
-                //MessageBox.Show("!");
                 return;
             }
 
@@ -283,30 +428,55 @@ namespace PNID_Viewer.ViewModel
                 NewLineHandling = NewLineHandling.Replace,
                 OmitXmlDeclaration = false
             };
+
+            string _Filename = "";
+            string _Width = "";
+            string _Height = "";
+            string _Depth = "";
+            foreach (var item in XmlDatas)
+            {
+                if (item.XmlFilename.Equals(_XmlFileName))
+                {
+                    if (item.Filename.Equals("") ||
+                        item.Width.ToString().Equals("") ||
+                        item.Height.ToString().Equals("") ||
+                        item.Depth.ToString().Equals(""))
+                        continue;
+                    _Filename = item.Filename;
+                    _Width = item.Width.ToString();
+                    _Height = item.Height.ToString();
+                    _Depth = item.Depth.ToString();
+                    break;
+                }
+            }
+
             using (XmlWriter wr = XmlWriter.Create(str, settings))
             {
                 wr.WriteStartDocument();
                 wr.WriteStartElement("annotation");
                 //TODO: CheckedXmlDatas에 1개의 xml정보만 들어와있어야함
-                wr.WriteElementString("filmename", CheckedXmlDatas[0].Filename);
+                wr.WriteElementString("filename", _Filename);
                 wr.WriteStartElement("size");
-                wr.WriteElementString("width", CheckedXmlDatas[0].Width.ToString());
-                wr.WriteElementString("height", CheckedXmlDatas[0].Height.ToString());
-                wr.WriteElementString("depth", CheckedXmlDatas[0].Depth.ToString());
+                wr.WriteElementString("width", _Width);
+                wr.WriteElementString("height", _Height);
+                wr.WriteElementString("depth", _Depth);
                 wr.WriteEndElement();  //size
-                foreach (var item in CheckedXmlDatas)
+                foreach (var item in XmlDatas)
                 {
-                    wr.WriteStartElement("object");
-                    //TODO :name에 빈 값이 나올 때 오류 발생
-                    wr.WriteElementString("name", item.Name);
-                    wr.WriteElementString("degree", item.Degree.ToString());
-                    wr.WriteStartElement("bndbox");
-                    wr.WriteElementString("xmin", item.Xmin.ToString());
-                    wr.WriteElementString("ymin", item.Ymin.ToString());
-                    wr.WriteElementString("xmax", item.Xmax.ToString());
-                    wr.WriteElementString("ymax", item.Ymax.ToString());
-                    wr.WriteEndElement();  //bndbox
-                    wr.WriteEndElement();  //object
+                    if (item.XmlFilename.Equals(_XmlFileName))
+                    {
+                        wr.WriteStartElement("object");
+                        //TODO :name에 빈 값이 나올 때 오류 발생
+                        wr.WriteElementString("name", item.Name);
+                        wr.WriteElementString("degree", item.Degree.ToString());
+                        wr.WriteStartElement("bndbox");
+                        wr.WriteElementString("xmin", item.Xmin.ToString());
+                        wr.WriteElementString("ymin", item.Ymin.ToString());
+                        wr.WriteElementString("xmax", item.Xmax.ToString());
+                        wr.WriteElementString("ymax", item.Ymax.ToString());
+                        wr.WriteEndElement();  //bndbox
+                        wr.WriteEndElement();  //object
+                    }
                 }
                 wr.WriteEndElement();  //annotation
                 wr.WriteEndDocument();

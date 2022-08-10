@@ -26,7 +26,9 @@ namespace PNID_Viewer.ViewModel.Commands
 
         public void Execute(object parameter)
         {
-            VM.WriteXml();
+            //Listview에서 우클릭 시 나오는 '내보내기' 메뉴 클릭했을 때
+            String cb = (String)parameter;
+            VM.WriteXml(cb);
         }
     }
 }

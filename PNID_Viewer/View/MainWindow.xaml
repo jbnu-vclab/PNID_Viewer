@@ -11,7 +11,7 @@
         xmlns:vm="clr-namespace:PNID_Viewer.ViewModel"
         xmlns:command="clr-namespace:PNID_Viewer.ViewModel.Commands"
         mc:Ignorable="d"
-        Title="MainWindow" Height="700" Width="1000">
+        Title="PNID_Viewer" Height="700" Width="1000">
     
     <Window.Resources>
         <command:OpenImageCommand x:Key="OpenImage"/>
@@ -31,9 +31,6 @@
                 <MenuItem Header="Xml" Command="{Binding Source={StaticResource vm}, Path=OpenXmlCommand}"/>
                 <MenuItem Header="Image" Command="{Binding Source={StaticResource OpenImage}}"/>
             </MenuItem>
-            <MenuItem Header="내보내기">
-                <MenuItem Header="Xml" Command="{Binding Source={StaticResource vm}, Path=WriteXmlCommand}"/>
-            </MenuItem>
         </Menu>
 
         <Grid Grid.Row="1">
@@ -42,8 +39,6 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-
-
 
             <vm:ZoomBorder x:Name="border" ClipToBounds="True" Background="Gray">
             <ItemsControl DataContext="{Binding Source={StaticResource vm}}" ItemsSource="{Binding Path=CheckedXmlDatas, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True, UpdateSourceTrigger=PropertyChanged}">
@@ -55,11 +50,10 @@
                                     <i:EventTrigger EventName="MouseLeftButtonDown">
                                         <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnMouseLeftButtonDownCommand" />
                                     </i:EventTrigger>
-                                    
-                                    <i:EventTrigger EventName="MouseRightButtonDown">
-                                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnMouseRightButtonDownCommand" />
-                                    </i:EventTrigger>
 
+                                    <i:EventTrigger EventName="MouseMove">
+                                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnMouseMoveCommand" />
+                                    </i:EventTrigger>
                                 </i:Interaction.Triggers>
                                 <Canvas.Background>
                                     <ImageBrush ImageSource="{Binding Source={StaticResource OpenImage}, Path=ImagePath, UpdateSourceTrigger=PropertyChanged}"/>
@@ -73,30 +67,38 @@
                         <Setter Property="Canvas.Left" Value="{Binding Xmin}"/>
                         <Setter Property="Canvas.Top" Value="{Binding Ymin}"/>
                     </Style>
-                </ItemsControl.ItemContainerStyle>
+                    </ItemsControl.ItemContainerStyle>
 
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                            <Rectangle Width="{Binding RectangleWidth}" Height="{Binding RectangleHeight}" Stroke="Red" StrokeThickness="2" />
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Rectangle Width="{Binding RectangleWidth}" Height="{Binding RectangleHeight}" Stroke="{Binding Color}" StrokeThickness="3" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
                 </vm:ZoomBorder>
 
             <GridSplitter Grid.Column="1" Background="LightGray" Width="5" HorizontalAlignment="Center" VerticalAlignment="Stretch" ShowsPreview="True"/>
 
-            <Grid Grid.Column="2">
+            <Grid Grid.Column="1" Grid.ColumnSpan="2" Height="653" Margin="4.4,0,-0.4,-0.2" VerticalAlignment="Bottom">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="4*"/>
+                    <RowDefinition Height="0.5*"/>
                 </Grid.RowDefinitions>
 
                 <ListView x:Name="XmlNameListBox" Grid.Row="0" 
                           ItemsSource="{Binding Source={StaticResource vm}, Path=XmlFileNameList, Mode=OneWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}">
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <CheckBox Content="{Binding}" Command="{Binding Source={StaticResource vm}, Path=IsCheckedCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
+                            <CheckBox Name="CB" Content="{Binding}" Command="{Binding Source={StaticResource vm}, Path=IsCheckedCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}">
+                                <CheckBox.ContextMenu>
+                                    <ContextMenu StaysOpen="true">
+                                        <MenuItem Header="보기" Command="{Binding Source={StaticResource vm}, Path=ViewXmlCommand}" CommandParameter="{Binding}"/>
+                                        <MenuItem Header="내보내기" Command="{Binding Source={StaticResource vm}, Path=WriteXmlCommand}" CommandParameter="{Binding}"/>
+                                    </ContextMenu>
+                                </CheckBox.ContextMenu>
+                            </CheckBox>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
@@ -104,9 +106,9 @@
                 <GridSplitter Grid.Row="1" Background="LightGray" Height="5" HorizontalAlignment="Stretch" VerticalAlignment="Center" ShowsPreview="True"/>
 
                 <DataGrid x:Name="XmlContentsDataGrid" Grid.Row="2" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto"
-                  AutoGenerateColumns="False"  DataContext="{Binding Source={StaticResource vm}}"
-                  ItemsSource="{Binding Path=CheckedXmlDatas, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
-                  CanUserAddRows="True" CanUserDeleteRows="True">
+                        AutoGenerateColumns="False"  DataContext="{Binding Source={StaticResource vm}}"
+                        ItemsSource="{Binding Path=ViewXmlDatas, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
+                        CanUserAddRows="True" CanUserDeleteRows="True">
                     <DataGrid.Columns>
                         <DataGridTextColumn MinWidth="10" Width="Auto" Header="Degree" Binding="{Binding Degree}"/>
                         <DataGridTextColumn MinWidth="10" Width="Auto" Header="Xmin" Binding="{Binding Xmin}"/>
@@ -116,7 +118,8 @@
                         <DataGridTextColumn MinWidth="10" Width="Auto" Header="Name" Binding="{Binding Name}"/>
                     </DataGrid.Columns>
                 </DataGrid>
-
+                <Button Grid.Row="3" Margin="5" Content="Save" 
+                        Command="{Binding Source={StaticResource vm}, Path=SaveButtonClickCommand}"/>
             </Grid>
         </Grid>
     </Grid>

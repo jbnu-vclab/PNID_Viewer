@@ -104,7 +104,14 @@ namespace PNID_Viewer.Model
             get { return rectangleHeight; }
             set { rectangleHeight = value; OnPropertyChanged(nameof(RectangleHeight)); }
         }
-        
+
+        private string color;
+        public string Color
+        {
+            get { return color; }
+            set { color = value; OnPropertyChanged(nameof(Color)); }
+        }
+
 
         public event PropertyChangedEventHandler PropertyChanged;
 
