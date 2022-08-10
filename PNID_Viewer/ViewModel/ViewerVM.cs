@@ -92,7 +92,6 @@ namespace PNID_Viewer.ViewModel
 
                 temp.RectangleWidth = temp.Xmax - temp.Xmin;
                 temp.RectangleHeight = temp.Ymax - temp.Ymin;
-
                 XmlDatas[0] = temp;
                 CheckedXmlDatas[0] = temp;
                 ViewXmlDatas.Insert(0, temp);
@@ -119,6 +118,7 @@ namespace PNID_Viewer.ViewModel
                 temp.RectangleWidth = temp.Xmax - temp.Xmin;
                 temp.RectangleHeight = temp.Ymax - temp.Ymin;
                 CheckedXmlDatas[0] = temp;
+
                 XmlDatas[0] = temp;
             }
         }
@@ -164,14 +164,13 @@ namespace PNID_Viewer.ViewModel
                     XmlDatas.Add(item);
                     CheckedXmlDatas.Add(item);
                 }
+
             }
         }
 
-        //XmlDatas에서 원하는 정보만을 CheckedXmlDatas에 추가/제거하는 함수
         //IsCheckedCommand에서 사용
         public void AddData(string _XmlFileName)
         {
-            //XmlDatas -> CheckedXmlDatas
             foreach (var item in XmlDatas)
             {
                 if (item.XmlFilename.Equals(_XmlFileName))
@@ -205,8 +204,10 @@ namespace PNID_Viewer.ViewModel
                 if (item.XmlFilename.Equals(_XmlFileName))
                 {
                     XmlDatas.Add(item);
+
                 }
             }
+            
             foreach (var item in TempXmlDatas)
             {
                 if (item.XmlFilename.Equals(_XmlFileName))
@@ -221,6 +222,9 @@ namespace PNID_Viewer.ViewModel
         {
             FilePathModel.XmlPath = FileExplorer();
         }
+
+        int tempFilenum = -1;   //Xml 파일을 하나라도 열었는지 확인하는 변수
+
         public void GetXmlDatas()
         {
             //xml파일만 진행됨(빈파일도 X)
@@ -254,10 +258,10 @@ namespace PNID_Viewer.ViewModel
 
             ReadXml(FilePathModel.XmlPath);
 
-
+            tempFilenum = 1;
         }
 
-        int tempFilenum = -1;   //Xml 파일을 하나라도 열었는지 확인하는 변수
+
         int tempColor = 0;  //몇 번 째로 열린 파일인지 확인하기 위한 변수
 
         //Xml의 정보를 읽음
@@ -371,20 +375,17 @@ namespace PNID_Viewer.ViewModel
             }
         }
 
+        //WriteXmlCommand에서 사용
         public void WriteXml(string _XmlFileName)
         {
-            //주의) 1개만 체크되어있어야함.
             string str;
             SaveFileDialog dialog = new SaveFileDialog();
             dialog.Filter = "Xml Files(*.xml;)|*.xml;|All files (*.*)|*.*";
+
             if (dialog.ShowDialog() == true)
-            {
                 str = dialog.FileName;
-            }
             else
-            {
                 return;
-            }
 
             XmlWriterSettings settings = new XmlWriterSettings
             {
@@ -415,6 +416,7 @@ namespace PNID_Viewer.ViewModel
 
             using (XmlWriter wr = XmlWriter.Create(str, settings))
             {
+                
                 wr.WriteStartDocument();
                 wr.WriteStartElement("annotation");
                 //TODO: CheckedXmlDatas에 1개의 xml정보만 들어와있어야함
@@ -424,12 +426,13 @@ namespace PNID_Viewer.ViewModel
                 wr.WriteElementString("height", _Height);
                 wr.WriteElementString("depth", _Depth);
                 wr.WriteEndElement();  //size
-                foreach (var item in XmlDatas)
+                foreach (var item in XmlDatas)  //XmlDatas에서 전달된 파일명과 같은 파일명을 가진 데이터들만 불러옴
                 {
                     if (item.XmlFilename.Equals(_XmlFileName))
                     {
                         wr.WriteStartElement("object");
                         //TODO :name에 빈 값이 나올 때 오류 발생
+                        if (item.Name == null) item.Name = "_";
                         wr.WriteElementString("name", item.Name);
                         wr.WriteElementString("degree", item.Degree.ToString());
                         wr.WriteStartElement("bndbox");
@@ -446,7 +449,7 @@ namespace PNID_Viewer.ViewModel
             }
         }
 
-        //주의)이 함수는 xml 불러올 떄만 사용됨. image불러오는 함수는 OpenImageCommand에서 작성됨.
+        //주의)이 함수는 xml 불러올 떄만 사용됨. image불러오는 함수는 OpenImageCommand에 작성됨.
         private string FileExplorer()
         {
             OpenFileDialog dig = new OpenFileDialog();

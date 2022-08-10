@@ -12,7 +12,7 @@
         xmlns:command="clr-namespace:PNID_Viewer.ViewModel.Commands"
         mc:Ignorable="d"
         Title="PNID_Viewer" Height="700" Width="1000">
-    
+
     <Window.Resources>
         <command:OpenImageCommand x:Key="OpenImage"/>
         <vm:ViewerVM x:Key="vm"/>
@@ -20,6 +20,7 @@
     <Window.DataContext>
         <vm:ViewerVM/>
     </Window.DataContext>
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -41,10 +42,9 @@
             </Grid.ColumnDefinitions>
 
             <vm:ZoomBorder x:Name="border" ClipToBounds="True" Background="Gray">
-            <ItemsControl DataContext="{Binding Source={StaticResource vm}}" ItemsSource="{Binding Path=CheckedXmlDatas, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True, UpdateSourceTrigger=PropertyChanged}">
+                <ItemsControl DataContext="{Binding Source={StaticResource vm}}" ItemsSource="{Binding Path=CheckedXmlDatas, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True, UpdateSourceTrigger=PropertyChanged}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <!--TODO: 캔버스 사이즈 바인딩-->
                             <Canvas MinHeight="1000" MinWidth="1000" Height="7016" Width="9933" >
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="MouseLeftButtonDown">
@@ -63,10 +63,10 @@
                     </ItemsControl.ItemsPanel>
 
                     <ItemsControl.ItemContainerStyle>
-                    <Style TargetType="ContentPresenter">
-                        <Setter Property="Canvas.Left" Value="{Binding Xmin}"/>
-                        <Setter Property="Canvas.Top" Value="{Binding Ymin}"/>
-                    </Style>
+                        <Style TargetType="ContentPresenter">
+                            <Setter Property="Canvas.Left" Value="{Binding Xmin}"/>
+                            <Setter Property="Canvas.Top" Value="{Binding Ymin}"/>
+                        </Style>
                     </ItemsControl.ItemContainerStyle>
 
                     <ItemsControl.ItemTemplate>
@@ -75,7 +75,7 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-                </vm:ZoomBorder>
+            </vm:ZoomBorder>
 
             <GridSplitter Grid.Column="1" Background="LightGray" Width="5" HorizontalAlignment="Center" VerticalAlignment="Stretch" ShowsPreview="True"/>
 
@@ -91,8 +91,6 @@
                           ItemsSource="{Binding Source={StaticResource vm}, Path=XmlFileNameList, Mode=OneWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}">
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            C
-                            T
                             <CheckBox Name="CB" Content="{Binding}" Command="{Binding Source={StaticResource vm}, Path=IsCheckedCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}">
                                 <CheckBox.ContextMenu>
                                     <ContextMenu StaysOpen="true">
