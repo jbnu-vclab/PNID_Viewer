@@ -36,7 +36,6 @@ namespace PNID_Viewer.ViewModel
         public OpenXmlCommand OpenXmlCommand { get; set; }              //Xml을 열기
         public WriteXmlCommand WriteXmlCommand { get; set; }            //Xml을 내보내기
         public IsCheckedCommand IsCheckedCommand { get; set; }          //Xml을 Checkbox에서 선택하기
-        public SaveButtonClickCommand SaveButtonClickCommand { get; set; }      //Datagrid 수정사항 반영하기
 
         //생성자
         public ViewerVM()
@@ -54,7 +53,6 @@ namespace PNID_Viewer.ViewModel
             OpenXmlCommand = new OpenXmlCommand(this);
             WriteXmlCommand = new WriteXmlCommand(this);
             IsCheckedCommand = new IsCheckedCommand(this);
-            SaveButtonClickCommand = new SaveButtonClickCommand(this);
 
             this.MouseLeftButtonDown += OnMouseLeftButtonDownCommand;
             this.MouseMove += OnMouseMoveCommand;
@@ -126,6 +124,8 @@ namespace PNID_Viewer.ViewModel
         //ViewXmlCommand에서 사용
         public void ViewData(string _XmlFileName)
         {
+            ViewXmlToXml();
+
             ViewXmlDatas.Clear();
             //XmlDatas -> ViewXmlDaatas
             foreach (var item in XmlDatas)
@@ -139,36 +139,36 @@ namespace PNID_Viewer.ViewModel
 
         public void SaveButtonClick()
         {
-            //TODO : CheckedXmlDatas같이 수정하는부분 다시 짜기
             TempXmlDatas = new ObservableCollection<XmlModel>();
             string _XmlFileName = ViewXmlDatas[0].XmlFilename;
-            foreach (var item in XmlDatas)
-            {
-                if (item.XmlFilename.Equals(_XmlFileName))
-                {
-                    TempXmlDatas.Add(item);
-                }
-            }
-            foreach (var item in TempXmlDatas)
-            {
-                if (item.XmlFilename.Equals(_XmlFileName))
-                {
-                    XmlDatas.Remove(item);
-                    CheckedXmlDatas.Remove(item);
-                }
-            }
-            foreach (var item in ViewXmlDatas)
-            {
-                if (item.XmlFilename.Equals(_XmlFileName))
-                {
-                    XmlDatas.Add(item);
-                    CheckedXmlDatas.Add(item);
-                }
+            //foreach (var item in XmlDatas)
+            //{
+            //    if (item.XmlFilename.Equals(_XmlFileName))
+            //    {
+            //        TempXmlDatas.Add(item);
+            //    }
+            //}
+            //foreach (var item in TempXmlDatas)
+            //{
+            //    if (item.XmlFilename.Equals(_XmlFileName))
+            //    {
+            //        XmlDatas.Remove(item);
+            //        CheckedXmlDatas.Remove(item);
+            //    }
+            //}
+            //foreach (var item in ViewXmlDatas)
+            //{
+            //    if (item.XmlFilename.Equals(_XmlFileName))
+            //    {
+            //        XmlDatas.Add(item);
+            //        CheckedXmlDatas.Add(item);
+            //    }
 
-            }
+            //}
         }
 
         //IsCheckedCommand에서 사용
+        //Checked -> XmlDatas에서 CheckedXmlDatas으로 정보 전달
         public void AddData(string _XmlFileName)
         {
             foreach (var item in XmlDatas)
@@ -181,6 +181,7 @@ namespace PNID_Viewer.ViewModel
             }
 
         }
+        //Unchecked -> CheckedXmlDatas의 데이터를 XmlDatas에 전달후 CheckedXmlDatas에서 해당 데이터 삭제
         public void DeleteData(string _XmlFileName)
         {
             TempXmlDatas = new ObservableCollection<XmlModel>();
@@ -378,6 +379,8 @@ namespace PNID_Viewer.ViewModel
         //WriteXmlCommand에서 사용
         public void WriteXml(string _XmlFileName)
         {
+            ViewXmlToXml();
+
             string str;
             SaveFileDialog dialog = new SaveFileDialog();
             dialog.Filter = "Xml Files(*.xml;)|*.xml;|All files (*.*)|*.*";
@@ -446,6 +449,39 @@ namespace PNID_Viewer.ViewModel
                 }
                 wr.WriteEndElement();  //annotation
                 wr.WriteEndDocument();
+            }
+        }
+
+        //WriteXml()에서 사용
+        //ViewXmlDatas의 데이터를 XmlDatas에 전달
+        public void ViewXmlToXml()
+        {
+            TempXmlDatas = new ObservableCollection<XmlModel>();
+            string _XmlFileName = ViewXmlDatas[0].XmlFilename;
+
+            foreach (var item in XmlDatas)
+            {
+                if (item.XmlFilename.Equals(_XmlFileName))
+                {
+                    TempXmlDatas.Add(item);
+                }
+            }
+
+            foreach (var item in TempXmlDatas)
+            {
+                if (item.XmlFilename.Equals(_XmlFileName))
+                {
+                    XmlDatas.Remove(item);
+                }
+            }
+            //TODO: ViewXmlDatas 교체시....
+            foreach (var item in ViewXmlDatas)
+            {
+                if (item.XmlFilename.Equals(_XmlFileName))
+                {
+                    XmlDatas.Add(item);
+
+                }
             }
         }
 

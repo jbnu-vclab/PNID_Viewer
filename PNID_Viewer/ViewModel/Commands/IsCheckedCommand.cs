@@ -43,8 +43,9 @@ namespace PNID_Viewer.ViewModel.Commands
 
 
             }
-            //Listview에서 우클릭 시 나오는 '보기' 메뉴 클릭했을 때
+            //Listview클릭했을 때
             String cb = checkBox.Content.ToString();
+
             VM.ViewData(cb);
         }
     }
