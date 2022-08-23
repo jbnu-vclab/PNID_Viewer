@@ -26,7 +26,7 @@ namespace PNID_Viewer.Model
             set { filename = value; OnPropertyChanged(nameof(Filename)); }
         }
 
-
+ 
         private int width;
         public int Width
         {
