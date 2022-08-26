@@ -41,7 +41,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <vm:ZoomBorder x:Name="border" ClipToBounds="True" Background="Gray">
+            <vm:ZoomBorder x:Name="border" ClipToBounds="True" Background="Gray" ViewXmlReference="{Binding Source={StaticResource vm}, Path=ViewXmlDatas}">
                 <ItemsControl DataContext="{Binding Source={StaticResource vm}}" ItemsSource="{Binding Path=CheckedXmlDatas, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True, UpdateSourceTrigger=PropertyChanged}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -106,7 +106,8 @@
                 <DataGrid x:Name="XmlContentsDataGrid" Grid.Row="2" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto"
                         AutoGenerateColumns="False" DataContext="{Binding Source={StaticResource vm}}"
                         ItemsSource="{Binding Path=ViewXmlDatas, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
-                        CanUserAddRows="True" CanUserDeleteRows="True">
+                        CanUserAddRows="True" CanUserDeleteRows="True"
+                        SelectedIndex="{Binding ElementName=border, Path=SelectedItemIndex, Mode=TwoWay}">
                     <DataGrid.Columns>
                         <DataGridTextColumn MinWidth="10" Width="Auto" Header="Degree" Binding="{Binding Degree}"/>
                         <DataGridTextColumn MinWidth="10" Width="Auto" Header="Xmin" Binding="{Binding Xmin}"/>
