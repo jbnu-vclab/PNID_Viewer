@@ -58,6 +58,19 @@ namespace PNID_Viewer.ViewModel
             this.MouseMove += OnMouseMoveCommand;
         }
 
+        //TODO : Datagrid에서 선택한 열의 값 받아오기
+        private XmlModel selectedRow;
+
+        public XmlModel SelectedRow
+        {
+            get { return selectedRow; }
+            set { selectedRow = value;
+                //MessageBox.Show(SelectedRow.Xmin.ToString());
+            }
+        }
+
+
+
         Point start;       //Box의 시작점을 저장
         Point end;         //Box의 끝점을 저장
         int tempNum = -1;  //시작점이 찍혔는지 확인하는 변수
@@ -135,36 +148,6 @@ namespace PNID_Viewer.ViewModel
                     ViewXmlDatas.Add(item);
                 }
             }
-        }
-
-        public void SaveButtonClick()
-        {
-            TempXmlDatas = new ObservableCollection<XmlModel>();
-            string _XmlFileName = ViewXmlDatas[0].XmlFilename;
-            //foreach (var item in XmlDatas)
-            //{
-            //    if (item.XmlFilename.Equals(_XmlFileName))
-            //    {
-            //        TempXmlDatas.Add(item);
-            //    }
-            //}
-            //foreach (var item in TempXmlDatas)
-            //{
-            //    if (item.XmlFilename.Equals(_XmlFileName))
-            //    {
-            //        XmlDatas.Remove(item);
-            //        CheckedXmlDatas.Remove(item);
-            //    }
-            //}
-            //foreach (var item in ViewXmlDatas)
-            //{
-            //    if (item.XmlFilename.Equals(_XmlFileName))
-            //    {
-            //        XmlDatas.Add(item);
-            //        CheckedXmlDatas.Add(item);
-            //    }
-
-            //}
         }
 
         //IsCheckedCommand에서 사용
@@ -379,7 +362,7 @@ namespace PNID_Viewer.ViewModel
         //WriteXmlCommand에서 사용
         public void WriteXml(string _XmlFileName)
         {
-            ViewXmlToXml();
+            ViewXmlToXml(_XmlFileName);
 
             string str;
             SaveFileDialog dialog = new SaveFileDialog();
@@ -452,8 +435,35 @@ namespace PNID_Viewer.ViewModel
             }
         }
 
-        //WriteXml()에서 사용
         //ViewXmlDatas의 데이터를 XmlDatas에 전달
+        public void ViewXmlToXml(string _XmlFileName)
+        {
+            TempXmlDatas = new ObservableCollection<XmlModel>();
+
+            foreach (var item in XmlDatas)
+            {
+                if (item.XmlFilename.Equals(_XmlFileName))
+                {
+                    TempXmlDatas.Add(item);
+                }
+            }
+
+            foreach (var item in TempXmlDatas)
+            {
+                if (item.XmlFilename.Equals(_XmlFileName))
+                {
+                    XmlDatas.Remove(item);
+                }
+            }
+            foreach (var item in ViewXmlDatas)
+            {
+                if (item.XmlFilename.Equals(_XmlFileName))
+                {
+                    XmlDatas.Add(item);
+
+                }
+            }
+        }
         public void ViewXmlToXml()
         {
             TempXmlDatas = new ObservableCollection<XmlModel>();
