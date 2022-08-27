@@ -1,26 +1,22 @@
-﻿using Microsoft.Win32;
-using PNID_Viewer.Model;
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
-using System.Xml;
+using System.Windows.Controls;
+using System.Windows;
 
 namespace PNID_Viewer.ViewModel.Commands
 {
-    public class OpenXmlCommand : ICommand
+    public class ViewXmlCommand : ICommand
     {
         public ViewerVM VM { get; set; }
-        public OpenXmlCommand(ViewerVM vm)
+        public ViewXmlCommand(ViewerVM vm)
         {
             VM = vm;
         }
+
         public event EventHandler CanExecuteChanged;
 
         public bool CanExecute(object parameter)
@@ -30,10 +26,9 @@ namespace PNID_Viewer.ViewModel.Commands
 
         public void Execute(object parameter)
         {
-            //VM의 파일 여는 함수 호출
-            VM.OpenXml();
-            //XML 불러오기 & XML 정보 저장
-            VM.GetXmlDatas();
+            //Listview에서 우클릭 시 나오는 '보기' 메뉴 클릭했을 때
+            String cb = (String)parameter;
+            VM.ViewData(cb);
         }
     }
 }

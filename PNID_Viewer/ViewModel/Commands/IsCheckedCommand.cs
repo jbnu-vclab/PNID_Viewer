@@ -40,7 +40,13 @@ namespace PNID_Viewer.ViewModel.Commands
 
                 //체크X - 컬랙션에서 제거
                 VM.DeleteData(checkBox.Content.ToString());
+
+
             }
+            //Listview클릭했을 때
+            String cb = checkBox.Content.ToString();
+
+            VM.ViewData(cb);
         }
     }
 }

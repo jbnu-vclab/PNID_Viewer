@@ -31,8 +31,6 @@ namespace PNID_Viewer.Model
             set { height = value; OnPropertyChanged(nameof(Height)); }
         }
 
-
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnPropertyChanged(string propertyName)

@@ -40,6 +40,7 @@ namespace PNID_Viewer.ViewModel.Commands
 
         public void Execute(object parameter)
         {
+            //이미지 열기
             ImagePath = FileExplorer();
         }
 
