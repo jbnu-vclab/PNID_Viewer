@@ -11,7 +11,7 @@
         xmlns:vm="clr-namespace:PNID_Viewer.ViewModel"
         xmlns:command="clr-namespace:PNID_Viewer.ViewModel.Commands"
         mc:Ignorable="d"
-        Title="PNID_Viewer" Height="700" Width="1000">
+        Title="PNID_Viewer" Height="700"  Width="1000">
 
     <Window.Resources>
         <command:OpenImageCommand x:Key="OpenImage"/>
@@ -20,7 +20,7 @@
     <Window.DataContext>
         <vm:ViewerVM/>
     </Window.DataContext>
-    
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -45,7 +45,7 @@
                 <ItemsControl DataContext="{Binding Source={StaticResource vm}}" ItemsSource="{Binding Path=CheckedXmlDatas, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True, UpdateSourceTrigger=PropertyChanged}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <Canvas MinHeight="1000" MinWidth="1000" Height="7016" Width="9933" >
+                            <Canvas Height="7016" Width="9933" >
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="MouseLeftButtonDown">
                                         <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnMouseLeftButtonDownCommand" />
@@ -79,7 +79,7 @@
 
             <GridSplitter Grid.Column="1" Background="LightGray" Width="5" HorizontalAlignment="Center" VerticalAlignment="Stretch" ShowsPreview="True"/>
 
-            <Grid Grid.Column="2" Grid.ColumnSpan="2" Height="653" Margin="4.4,0,-0.4,-0.2" VerticalAlignment="Bottom">
+            <Grid Grid.Column="2" Margin="4.6,0,-0.4,-0.2" VerticalAlignment="Stretch">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
