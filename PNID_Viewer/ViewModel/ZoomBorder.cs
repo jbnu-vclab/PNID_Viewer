@@ -1,4 +1,6 @@
 ﻿using PNID_Viewer.Model;
+using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,6 +19,40 @@ namespace PNID_Viewer.ViewModel
         private UIElement child = null;
         private Point origin;
         private Point start;
+               
+        public int SelectedItemIndex
+        {
+            get { return (int)GetValue(SelectedItemIndexProperty); }
+            set { SetValue(SelectedItemIndexProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for SelectedItemIndex.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty SelectedItemIndexProperty =
+            DependencyProperty.Register("SelectedItemIndex", typeof(int), typeof(ZoomBorder), new PropertyMetadata(0, OnSelectionChanged));
+
+        private static void OnSelectionChanged(DependencyObject source, DependencyPropertyChangedEventArgs e)
+        {
+            ZoomBorder zoomBorder = source as ZoomBorder;
+            zoomBorder.ChangeFocusToSelectedCentered();
+        }
+
+        private const int SELECTION_THRESHOLD = 10;
+               
+        public ObservableCollection<XmlModel> ViewXmlReference
+        {
+            get { return (ObservableCollection<XmlModel>)GetValue(ViewXmlReferenceProperty); }
+            set { SetValue(ViewXmlReferenceProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for ViewXmlReference.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty ViewXmlReferenceProperty =
+            DependencyProperty.Register("ViewXmlReference", typeof(ObservableCollection<XmlModel>), typeof(ZoomBorder), new PropertyMetadata(null, OnChanged));
+
+        private static void OnChanged(DependencyObject source, DependencyPropertyChangedEventArgs e)
+        {
+            // Empty Callback
+        }
+
 
         private TranslateTransform GetTranslateTransform(UIElement element)
         {
@@ -40,7 +76,29 @@ namespace PNID_Viewer.ViewModel
                 base.Child = value;
             }
         }
-        
+
+        public void ChangeFocusToSelectedCentered()
+        {
+            if (SelectedItemIndex >= ViewXmlReference.Count)
+                return;
+            if (SelectedItemIndex < 0) // TODO: Bug? ListView를 눌렀을 때에도 호출됨. Focus가 변경되는 경우에 호출되는 수도 있을 것으로 예상
+                return;
+
+            XmlModel selectedData = ViewXmlReference[SelectedItemIndex];
+            int midX = (int)((selectedData.Xmin + selectedData.Xmax) / 2.0f);
+            int midY = (int)((selectedData.Ymin + selectedData.Ymax) / 2.0f);
+
+            // (Note)Image에 대한 Render Transform이기 때문에, X,Y 값이 증가하면 이미지가 우측 아래로 이동
+            var tt = GetTranslateTransform(child);
+            var st = GetScaleTransform(child);
+
+            // 왼쪽 위가 기준점이으로 화면 가운데로 가져오기 위해 캔버스크기(RenderSize)의 절반만큼 보정 이동
+            int renderCenterX = (int)(child.RenderSize.Width / 2.0);
+            int renderCenterY = (int)(child.RenderSize.Height / 2.0);
+
+            tt.X = (-midX) * st.ScaleX + renderCenterX;
+            tt.Y = (-midY) * st.ScaleY + renderCenterY;
+        }
 
         public void Initialize(UIElement element)
         {
@@ -119,10 +177,47 @@ namespace PNID_Viewer.ViewModel
             }
         }
 
+        private Point ConvertCanvasCoordToImageCoord(Point p)
+        {
+            Point converted = new Point();
+            var st = GetScaleTransform(child);
+            var tt = GetTranslateTransform(child);
+
+            converted.X = ((-tt.X) + p.X) / st.ScaleX;
+            converted.Y = ((-tt.Y) + p.Y) / st.ScaleY;
+
+            return converted;
+        }
+
         private void child_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             if (child != null)
             {
+                // Border에서의 Box Selection Logic
+                // 마우스를 좌클릭 하는 경우가 두 가지(패닝 & Selection)이므로, 불편함이 없으려면 두 가지 인터랙션의 구분이 필요
+                // 클릭-클릭해제 간 좌표값의 차이가 거의 없는 경우 Selection으로 판단함
+
+                Point end = e.GetPosition(this);
+                double squaredDistance = Math.Pow((end.X - start.X), 2.0) + Math.Pow((end.Y - start.Y), 2.0);
+                if(squaredDistance < SELECTION_THRESHOLD) 
+                {
+                    // Selection으로 판단된 경우
+                    // 우선 클릭 위치를 이미지 좌표로 변환
+                    Point clickImageCoord = ConvertCanvasCoordToImageCoord(start);
+
+                    for(int i=0; i<ViewXmlReference.Count;i++)
+                    {
+                        XmlModel item = ViewXmlReference[i];
+                        if(clickImageCoord.X > item.Xmin && clickImageCoord.X < item.Xmax &&
+                            clickImageCoord.Y > item.Ymin && clickImageCoord.Y < item.Ymax)
+                        {
+                            // 박스 안에 포함된 좌표라면 SelectedBox에 저장하고 종료
+                            SelectedItemIndex = i;
+                            break;
+                        }
+                    }
+                }
+
                 child.ReleaseMouseCapture();
                 this.Cursor = Cursors.Arrow;
             }
