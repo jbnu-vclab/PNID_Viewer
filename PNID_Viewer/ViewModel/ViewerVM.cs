@@ -58,16 +58,16 @@ namespace PNID_Viewer.ViewModel
             this.MouseMove += OnMouseMoveCommand;
         }
 
-        //TODO : Datagrid에서 선택한 열의 값 받아오기
-        private XmlModel selectedRow;
+        ////TODO : Datagrid에서 선택한 열의 값 받아오기
+        //private XmlModel selectedRow;
 
-        public XmlModel SelectedRow
-        {
-            get { return selectedRow; }
-            set { selectedRow = value;
-                //MessageBox.Show(SelectedRow.Xmin.ToString());
-            }
-        }
+        //public XmlModel SelectedRow
+        //{
+        //    get { return selectedRow; }
+        //    set { selectedRow = value;
+        //        //MessageBox.Show(SelectedRow.Xmin.ToString());
+        //    }
+        //}
 
 
 
@@ -251,11 +251,6 @@ namespace PNID_Viewer.ViewModel
         //Xml의 정보를 읽음
         private void ReadXml(string filePath)
         {
-            //TODO해결: XmlDatas에 같은 게 들어감 -> DataGrid문제X, 모델 깊은 복사
-            string _filename = "";
-            string _width = "";
-            string _height = "";
-            string _depth = "";
             string colorinfo = "";
 
             if (tempColor == 0)     //열린 순서에 따라 색깔 구분
@@ -293,32 +288,19 @@ namespace PNID_Viewer.ViewModel
                         //return only when you have START tag  
                         switch (reader.Name.ToString())
                         {
-                            //TODO해결 : filename ~ depth는 1번만 들어감
-                            case "filename":
-                                _filename = reader.ReadString();
+                            case "type":
+                                XmlModel.Type = reader.ReadString();
                                 break;
-                            case "width":
-                                _width = reader.ReadString();
-                                break;
-                            case "height":
-                                _height = reader.ReadString();
-                                break;
-                            case "depth":
-                                _depth = reader.ReadString();
-                                break;
-                            case "name":
-                                XmlModel.Name = reader.ReadString();
-                                XmlModel.Filename = _filename;
-                                XmlModel.Width = Convert.ToInt32(_width);
-                                XmlModel.Height = Convert.ToInt32(_height);
-                                XmlModel.Depth = Convert.ToInt32(_depth);
+                            case "class":
+                                XmlModel.Class = reader.ReadString();
                                 XmlModel.XmlFilename = FindNameToXmlPath(FilePathModel.XmlPath);
                                 break;
                             case "degree":
                                 XmlModel.Degree = Convert.ToDouble(reader.ReadString());
                                 break;
                             case "xmin":
-                                XmlModel.Xmin = Convert.ToInt32(reader.ReadString());
+                                double s = reader.ReadElementContentAsDouble();
+                                XmlModel.Xmin = Convert.ToInt32(s);
                                 break;
                             case "ymin":
                                 XmlModel.Ymin = Convert.ToInt32(reader.ReadString());
@@ -328,17 +310,18 @@ namespace PNID_Viewer.ViewModel
                                 break;
                             case "ymax":
                                 XmlModel.Ymax = Convert.ToInt32(reader.ReadString());
+                                break;
+                            case "flip":
+                                XmlModel.Flip = reader.ReadString();
 
                                 XmlModel.RectangleWidth = XmlModel.Xmax - XmlModel.Xmin;
                                 XmlModel.RectangleHeight = XmlModel.Ymax - XmlModel.Ymin;
 
                                 XmlModel temp = new XmlModel();
                                 temp.XmlFilename = XmlModel.XmlFilename;
-                                temp.Name = XmlModel.Name;
-                                temp.Filename = XmlModel.Filename;
-                                temp.Width = XmlModel.Width;
-                                temp.Height = XmlModel.Height;
-                                temp.Depth = XmlModel.Depth;
+                                temp.Type = XmlModel.Type;
+                                temp.Class = XmlModel.Class;
+                                temp.Flip = XmlModel.Flip;
                                 temp.Degree = XmlModel.Degree;
                                 temp.Xmin = XmlModel.Xmin;
                                 temp.Ymin = XmlModel.Ymin;
@@ -382,51 +365,28 @@ namespace PNID_Viewer.ViewModel
                 OmitXmlDeclaration = false
             };
 
-            string _Filename = "_";
-            string _Width = "";
-            string _Height = "";
-            string _Depth = "";
-            foreach (var item in XmlDatas)
-            {
-                if (item.XmlFilename.Equals(_XmlFileName))
-                {
-                    //주의) 기존의 것이 하나 이상 남아있어야 함
-                    //if (item.Filename.Equals(null)) continue; 
-                    _Filename = item.Filename;
-                    _Width = item.Width.ToString();
-                    _Height = item.Height.ToString();
-                    _Depth = item.Depth.ToString();
-                    //break;
-                }
-            }
-
             using (XmlWriter wr = XmlWriter.Create(str, settings))
             {
                 
                 wr.WriteStartDocument();
                 wr.WriteStartElement("annotation");
-                //TODO: CheckedXmlDatas에 1개의 xml정보만 들어와있어야함
-                wr.WriteElementString("filename", _Filename);
-                wr.WriteStartElement("size");
-                wr.WriteElementString("width", _Width);
-                wr.WriteElementString("height", _Height);
-                wr.WriteElementString("depth", _Depth);
-                wr.WriteEndElement();  //size
                 foreach (var item in XmlDatas)  //XmlDatas에서 전달된 파일명과 같은 파일명을 가진 데이터들만 불러옴
                 {
                     if (item.XmlFilename.Equals(_XmlFileName))
                     {
-                        wr.WriteStartElement("object");
+                        wr.WriteStartElement("symbol_object");
                         //TODO :name에 빈 값이 나올 때 오류 발생
-                        if (item.Name == null) item.Name = "_";
-                        wr.WriteElementString("name", item.Name);
-                        wr.WriteElementString("degree", item.Degree.ToString());
+                        wr.WriteElementString("type", item.Type);
+                        wr.WriteElementString("class", item.Class);
                         wr.WriteStartElement("bndbox");
                         wr.WriteElementString("xmin", item.Xmin.ToString());
                         wr.WriteElementString("ymin", item.Ymin.ToString());
                         wr.WriteElementString("xmax", item.Xmax.ToString());
                         wr.WriteElementString("ymax", item.Ymax.ToString());
                         wr.WriteEndElement();  //bndbox
+                        wr.WriteElementString("degree", item.Degree.ToString());
+                        wr.WriteElementString("flip", item.Flip);
+                        wr.WriteElementString("etc", null);
                         wr.WriteEndElement();  //object
                     }
                 }

@@ -11,49 +11,34 @@ namespace PNID_Viewer.Model
     public class XmlModel : INotifyPropertyChanged
     {
         private string xmlFilename;
-
         public string XmlFilename
         {
             get { return xmlFilename; }
             set { xmlFilename = value; OnPropertyChanged(nameof(XmlFilename)); }
         }
-
-
-        private string filename;
-        public string Filename
+        private string type;
+        public string Type
         {
-            get { return filename; }
-            set { filename = value; OnPropertyChanged(nameof(Filename)); }
+            get { return type; }
+            set { type = value; OnPropertyChanged(nameof(Type)); }
         }
 
- 
-        private int width;
-        public int Width
+        private string _class;
+
+        public string Class
         {
-            get { return width; }
-            set { width = value; OnPropertyChanged(nameof(Width)); }
+            get { return _class; }
+            set { _class = value; OnPropertyChanged(nameof(Class)); }
         }
 
-        private int height;
-        public int Height
+        private string flip;
+
+        public string Flip
         {
-            get { return height; }
-            set { height = value; OnPropertyChanged(nameof(Height)); }
+            get { return flip; }
+            set { flip = value; OnPropertyChanged(nameof(Flip)); }
         }
 
-        private int depth;
-        public int Depth
-        {
-            get { return depth; }
-            set { depth = value; OnPropertyChanged(nameof(Depth)); }
-        }
-
-        private string name;
-        public string Name
-        {
-            get { return name; }
-            set { name = value; OnPropertyChanged(nameof(Name)); }
-        }
 
         private double degree;
         public double Degree
