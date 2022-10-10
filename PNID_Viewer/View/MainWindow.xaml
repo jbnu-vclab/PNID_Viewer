@@ -115,6 +115,7 @@
                         <DataGridTextColumn MinWidth="10" Width="Auto" Header="Xmax" Binding="{Binding Xmax}"/>
                         <DataGridTextColumn MinWidth="10" Width="Auto" Header="Ymax" Binding="{Binding Ymax}"/>
                         <DataGridTextColumn MinWidth="10" Width="Auto" Header="Flip" Binding="{Binding Flip}"/>
+                        <DataGridTextColumn MinWidth="10" Width="Auto" Header="Type" Binding="{Binding Type}"/>
                         <DataGridTextColumn MinWidth="10" Width="Auto" Header="Class" Binding="{Binding Class}"/>
                     </DataGrid.Columns>
                 </DataGrid>
