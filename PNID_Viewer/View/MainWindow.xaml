@@ -74,6 +74,7 @@
                             <Rectangle Width="{Binding RectangleWidth}" Height="{Binding RectangleHeight}" Stroke="{Binding Color}" StrokeThickness="3" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
+                    
                 </ItemsControl>
             </vm:ZoomBorder>
 

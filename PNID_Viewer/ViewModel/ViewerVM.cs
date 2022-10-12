@@ -56,33 +56,46 @@ namespace PNID_Viewer.ViewModel
 
             this.MouseLeftButtonDown += OnMouseLeftButtonDownCommand;
             this.MouseMove += OnMouseMoveCommand;
+            this.ViewXmlDatas.CollectionChanged += this.OnCollectionChanged;
+        }
+
+        void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if(e.Action == NotifyCollectionChangedAction.Remove)
+            {
+                //ViewXmlDatas를 XmlDatas와 CheckedXmlDatas에 반영
+                ViewXmlToXml();
+                ViewXmlToCheckedXml();
+            }
         }
 
         Point start;       //Box의 시작점을 저장
         Point end;         //Box의 끝점을 저장
-        int tempNum = -1;  //시작점이 찍혔는지 확인하는 변수
+        bool IsMouseRightButtonDown = false;    //시작점이 찍혔는지 확인하는 변수
 
         //Ctrl + 마우스 좌클릭
         public void OnMouseLeftButtonDownCommand(object sender, MouseButtonEventArgs e)
         {
             //시작점을 찍을 때
-            if (Keyboard.IsKeyDown(Key.LeftCtrl) && tempNum == -1)
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) && IsMouseRightButtonDown == false)
             {
                 XmlModel temp = new XmlModel();
                 start = e.GetPosition((IInputElement)sender);
+                temp.Color = "Blue";
                 CheckedXmlDatas.Insert(0, temp);
                 XmlDatas.Insert(0, temp);
-                tempNum = 1;
+                IsMouseRightButtonDown = true;
             }
-
             //끝점을 찍을 때
-            else if (Keyboard.IsKeyDown(Key.LeftCtrl) && tempNum == 1)
+            else if (Keyboard.IsKeyDown(Key.LeftCtrl) && IsMouseRightButtonDown == true)
             {
                 end = e.GetPosition((IInputElement)sender);
-
                 XmlModel temp = new XmlModel();
                 temp.XmlFilename = ViewXmlDatas[0].XmlFilename;
-                temp.Color = ViewXmlDatas[0].Color;
+                if(ViewXmlDatas[1].Color == "Blue")
+                    temp.Color = ViewXmlDatas[2].Color;
+                else
+                    temp.Color = ViewXmlDatas[1].Color;
                 temp.Xmax = Math.Max((int)start.X, (int)end.X);
                 temp.Xmin = Math.Min((int)start.X, (int)end.X);
                 temp.Ymax = Math.Max((int)start.Y, (int)end.Y);
@@ -93,14 +106,16 @@ namespace PNID_Viewer.ViewModel
                 XmlDatas[0] = temp;
                 CheckedXmlDatas[0] = temp;
                 ViewXmlDatas.Insert(0, temp);
-                tempNum = -1;
+                IsMouseRightButtonDown = false;
             }
+
         }
+
 
         //Box의 시작점이 찍히고 마우스가 움직일 때
         public void OnMouseMoveCommand(object sender, MouseEventArgs e)
         {
-            if (tempNum == 1) //시작점이 찍혔을 때만
+            if (IsMouseRightButtonDown == true && Keyboard.IsKeyDown(Key.LeftCtrl)) //시작점이 찍혔을 때만
             {
                 end = e.GetPosition((IInputElement)sender);
 
@@ -115,6 +130,7 @@ namespace PNID_Viewer.ViewModel
 
                 temp.RectangleWidth = temp.Xmax - temp.Xmin;
                 temp.RectangleHeight = temp.Ymax - temp.Ymin;
+
                 CheckedXmlDatas[0] = temp;
 
                 XmlDatas[0] = temp;
@@ -232,39 +248,20 @@ namespace PNID_Viewer.ViewModel
             tempFilenum = 1;
         }
 
-
+        enum Colors
+        {
+            Red, Green, Purple, Coral, RoyalBlue, Navy, SpringGreen
+        }
         int tempColor = 0;  //몇 번 째로 열린 파일인지 확인하기 위한 변수
 
         //Xml의 정보를 읽음
         private void ReadXml(string filePath)
         {
-            string colorinfo = "";
-
-            if (tempColor == 0)     //열린 순서에 따라 색깔 구분
-                colorinfo = "Red";
-
-            else if (tempColor == 1)
-                colorinfo = "RoyalBlue";
-
-            else if (tempColor == 2)
-                colorinfo = "Green";
-
-            else if (tempColor == 3)
-                colorinfo = "Purple";
-
-            else if (tempColor == 4)
-                colorinfo = "Coral";
-
-            else if (tempColor == 5)
-                colorinfo = "Navy";
-
-            else if (tempColor == 6)
-                colorinfo = "SpringGreen";
+            //열린 순서에 따라 색깔 구분
+            string colorinfo = ((Colors)Enum.ToObject(typeof(Colors), tempColor)).ToString();
 
             tempColor++;
-
-            if (tempColor == 7)
-                tempColor = 0;
+            tempColor = tempColor % 7;
 
             using (XmlReader reader = XmlReader.Create(filePath))
             {
@@ -437,6 +434,37 @@ namespace PNID_Viewer.ViewModel
                 if (item.XmlFilename.Equals(_XmlFileName))
                 {
                     XmlDatas.Add(item);
+
+                }
+            }
+        }
+
+        public void ViewXmlToCheckedXml()
+        {
+            TempXmlDatas = new ObservableCollection<XmlModel>();
+            string _XmlFileName = ViewXmlDatas[0].XmlFilename;
+
+            foreach (var item in CheckedXmlDatas)
+            {
+                if (item.XmlFilename.Equals(_XmlFileName))
+                {
+                    TempXmlDatas.Add(item);
+                }
+            }
+
+            foreach (var item in TempXmlDatas)
+            {
+                if (item.XmlFilename.Equals(_XmlFileName))
+                {
+                    CheckedXmlDatas.Remove(item);
+                }
+            }
+            //TODO: ViewXmlDatas 교체시....
+            foreach (var item in ViewXmlDatas)
+            {
+                if (item.XmlFilename.Equals(_XmlFileName))
+                {
+                    CheckedXmlDatas.Add(item);
 
                 }
             }

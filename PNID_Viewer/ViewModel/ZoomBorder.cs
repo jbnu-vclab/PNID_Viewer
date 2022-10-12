@@ -19,9 +19,6 @@ namespace PNID_Viewer.ViewModel
         private UIElement child = null;
         private Point origin;
         private Point start;
-        private string SelectedItemColor;
-        XmlModel selectedData;
-
 
         public int SelectedItemIndex
         {
@@ -35,8 +32,11 @@ namespace PNID_Viewer.ViewModel
 
         private static void OnSelectionChanged(DependencyObject source, DependencyPropertyChangedEventArgs e)
         {
+
             ZoomBorder zoomBorder = source as ZoomBorder;
-            zoomBorder.ChangeFocusToSelectedCentered();
+            if(!Keyboard.IsKeyDown(Key.LeftCtrl))
+                zoomBorder.ChangeFocusToSelectedCentered();
+
         }
 
         private const int SELECTION_THRESHOLD = 10;
@@ -80,17 +80,26 @@ namespace PNID_Viewer.ViewModel
             }
         }
 
+        public void ChangeSelectedDataColor(XmlModel selectedData)
+        {
+            string OriginalColor = "Blue";  //null값 오류를 막기 위함. 처음에 Blue일 수 없기 때문에 반드시 아래 if문을 통과한다.
+            if (selectedData.Color != "Blue")
+                OriginalColor = selectedData.Color;
+            foreach (var item in ViewXmlReference)
+            {
+                item.Color = OriginalColor;
+            }
+            selectedData.Color = "Blue";
+        }
+
         public void ChangeFocusToSelectedCentered()
         {
-            if (selectedData != null) {
-                selectedData.Color = SelectedItemColor;
-            }
             if (SelectedItemIndex >= ViewXmlReference.Count)
                 return;
             if (SelectedItemIndex < 0) // TODO: Bug? ListView를 눌렀을 때에도 호출됨. Focus가 변경되는 경우에 호출되는 수도 있을 것으로 예상
                 return;
 
-            selectedData = ViewXmlReference[SelectedItemIndex];
+            XmlModel selectedData = ViewXmlReference[SelectedItemIndex];
             int midX = (int)((selectedData.Xmin + selectedData.Xmax) / 2.0f);
             int midY = (int)((selectedData.Ymin + selectedData.Ymax) / 2.0f);
 
@@ -105,8 +114,7 @@ namespace PNID_Viewer.ViewModel
             tt.X = (-midX) * st.ScaleX + renderCenterX;
             tt.Y = (-midY) * st.ScaleY + renderCenterY;
 
-            SelectedItemColor = selectedData.Color;
-            selectedData.Color = "Black";
+            ChangeSelectedDataColor(selectedData);
         }
 
         public void Initialize(UIElement element)
@@ -126,8 +134,7 @@ namespace PNID_Viewer.ViewModel
                 this.MouseLeftButtonDown += child_MouseLeftButtonDown;
                 this.MouseLeftButtonUp += child_MouseLeftButtonUp;
                 this.MouseMove += child_MouseMove;
-                this.PreviewMouseRightButtonDown += new MouseButtonEventHandler(
-              child_PreviewMouseRightButtonDown);
+                this.PreviewMouseRightButtonDown += new MouseButtonEventHandler(child_PreviewMouseRightButtonDown);
             }
         }
         public void Reset()     //이 부분을 수정하면 줌/패닝 기본값 변경 가능
@@ -176,7 +183,7 @@ namespace PNID_Viewer.ViewModel
 
         private void child_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (child != null)
+            if (child != null && !Keyboard.IsKeyDown(Key.LeftCtrl))
             {
                 var tt = GetTranslateTransform(child);
                 start = e.GetPosition(this);
@@ -200,7 +207,7 @@ namespace PNID_Viewer.ViewModel
 
         private void child_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            if (child != null)
+            if (child != null && !Keyboard.IsKeyDown(Key.LeftCtrl))
             {
                 // Border에서의 Box Selection Logic
                 // 마우스를 좌클릭 하는 경우가 두 가지(패닝 & Selection)이므로, 불편함이 없으려면 두 가지 인터랙션의 구분이 필요
@@ -239,7 +246,7 @@ namespace PNID_Viewer.ViewModel
 
         private void child_MouseMove(object sender, MouseEventArgs e)
         {
-            if (child != null)
+            if (child != null && !Keyboard.IsKeyDown(Key.LeftCtrl))
             {
                 if (child.IsMouseCaptured)
                 {
