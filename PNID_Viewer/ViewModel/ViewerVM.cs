@@ -58,19 +58,6 @@ namespace PNID_Viewer.ViewModel
             this.MouseMove += OnMouseMoveCommand;
         }
 
-        ////TODO : Datagrid에서 선택한 열의 값 받아오기
-        //private XmlModel selectedRow;
-
-        //public XmlModel SelectedRow
-        //{
-        //    get { return selectedRow; }
-        //    set { selectedRow = value;
-        //        //MessageBox.Show(SelectedRow.Xmin.ToString());
-        //    }
-        //}
-
-
-
         Point start;       //Box의 시작점을 저장
         Point end;         //Box의 끝점을 저장
         int tempNum = -1;  //시작점이 찍혔는지 확인하는 변수

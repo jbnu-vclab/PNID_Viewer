@@ -19,7 +19,10 @@ namespace PNID_Viewer.ViewModel
         private UIElement child = null;
         private Point origin;
         private Point start;
-               
+        private string SelectedItemColor;
+        XmlModel selectedData;
+
+
         public int SelectedItemIndex
         {
             get { return (int)GetValue(SelectedItemIndexProperty); }
@@ -79,12 +82,15 @@ namespace PNID_Viewer.ViewModel
 
         public void ChangeFocusToSelectedCentered()
         {
+            if (selectedData != null) {
+                selectedData.Color = SelectedItemColor;
+            }
             if (SelectedItemIndex >= ViewXmlReference.Count)
                 return;
             if (SelectedItemIndex < 0) // TODO: Bug? ListView를 눌렀을 때에도 호출됨. Focus가 변경되는 경우에 호출되는 수도 있을 것으로 예상
                 return;
 
-            XmlModel selectedData = ViewXmlReference[SelectedItemIndex];
+            selectedData = ViewXmlReference[SelectedItemIndex];
             int midX = (int)((selectedData.Xmin + selectedData.Xmax) / 2.0f);
             int midY = (int)((selectedData.Ymin + selectedData.Ymax) / 2.0f);
 
@@ -98,6 +104,9 @@ namespace PNID_Viewer.ViewModel
 
             tt.X = (-midX) * st.ScaleX + renderCenterX;
             tt.Y = (-midY) * st.ScaleY + renderCenterY;
+
+            SelectedItemColor = selectedData.Color;
+            selectedData.Color = "Black";
         }
 
         public void Initialize(UIElement element)
