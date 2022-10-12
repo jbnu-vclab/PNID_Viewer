@@ -106,7 +106,7 @@
                 <DataGrid x:Name="XmlContentsDataGrid" Grid.Row="2" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto"
                         AutoGenerateColumns="False" DataContext="{Binding Source={StaticResource vm}}"
                         ItemsSource="{Binding Path=ViewXmlDatas, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
-                        CanUserAddRows="True" CanUserDeleteRows="True"
+                        CanUserAddRows="True" CanUserDeleteRows="True" CanUserSortColumns="False"
                         SelectedIndex="{Binding ElementName=border, Path=SelectedItemIndex, Mode=TwoWay}">
                     <DataGrid.Columns>
                         <DataGridTextColumn MinWidth="10" Width="Auto" Header="Degree" Binding="{Binding Degree}"/>
