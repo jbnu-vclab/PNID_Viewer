@@ -28,6 +28,12 @@ namespace PNID_Viewer
             InitializeComponent();
         }
 
+        private void XmlContentsDataGrid_TargetUpdated(object sender, DataTransferEventArgs e)
+        {
+            DataGrid dataGrid = (DataGrid)sender;
+            dataGrid.ScrollIntoView(dataGrid.SelectedItem);
+        }
+
         //private void ChangeFocusToSelected(object sender, SelectionChangedEventArgs e)
         //{
         //    // TODO: ListView를 Selection했을 경우에도 호출됨. 왜?

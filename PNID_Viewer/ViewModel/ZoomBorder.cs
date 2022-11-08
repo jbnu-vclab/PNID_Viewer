@@ -29,10 +29,9 @@ namespace PNID_Viewer.ViewModel
         // Using a DependencyProperty as the backing store for SelectedItemIndex.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty SelectedItemIndexProperty =
             DependencyProperty.Register("SelectedItemIndex", typeof(int), typeof(ZoomBorder), new PropertyMetadata(0, OnSelectionChanged));
-
+        
         private static void OnSelectionChanged(DependencyObject source, DependencyPropertyChangedEventArgs e)
         {
-
             ZoomBorder zoomBorder = source as ZoomBorder;
             if(!Keyboard.IsKeyDown(Key.LeftCtrl))
                 zoomBorder.ChangeFocusToSelectedCentered();

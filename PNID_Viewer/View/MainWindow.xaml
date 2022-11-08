@@ -83,7 +83,7 @@
             <Grid Grid.Column="2" Margin="4.6,0,-0.4,-0.2" VerticalAlignment="Stretch">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/> 
                     <RowDefinition Height="4*"/>
                 </Grid.RowDefinitions>
 
@@ -110,8 +110,10 @@
                 <DataGrid x:Name="XmlContentsDataGrid" Grid.Row="2" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto"
                         AutoGenerateColumns="False" DataContext="{Binding Source={StaticResource vm}}"
                         ItemsSource="{Binding Path=ViewXmlDatas, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
-                        CanUserAddRows="True" CanUserDeleteRows="True" CanUserSortColumns="False"
-                        SelectedIndex="{Binding ElementName=border, Path=SelectedItemIndex, Mode=TwoWay}">
+                        CanUserAddRows="True" CanUserDeleteRows="True" CanUserSortColumns="False" 
+                        SelectedIndex="{Binding ElementName=border, Path=SelectedItemIndex, Mode=TwoWay, NotifyOnTargetUpdated=True}"
+                          TargetUpdated="XmlContentsDataGrid_TargetUpdated">
+
                     <DataGrid.Columns>
                         <DataGridTextColumn MinWidth="10" Width="Auto" Header="Degree" Binding="{Binding Degree}"/>
                         <DataGridTextColumn MinWidth="10" Width="Auto" Header="Xmin" Binding="{Binding Xmin}"/>

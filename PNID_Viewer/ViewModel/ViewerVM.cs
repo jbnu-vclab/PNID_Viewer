@@ -26,7 +26,6 @@ namespace PNID_Viewer.ViewModel
         //XmlPathList는 이미 열린 파일인지 확인을 위한 것, XmlFileNameList은 리스트에 바인딩하기 위한 것
         public BindingList<string> XmlPathList { get; set; }
         public ObservableCollection<string> XmlFileNameList { get; set; }
-        public ObservableCollection<string> XmlFileNameViewList { get; set; }
 
         //파일을 열면 XmlDatas에 전부 추가됨, 리스트에서 체크된 파일만 CheckedXmlDatas에 추가되어 화면에 보임
         public ObservableCollection<XmlModel> XmlDatas { get; set; }
