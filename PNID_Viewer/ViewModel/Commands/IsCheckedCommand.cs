@@ -27,25 +27,23 @@ namespace PNID_Viewer.ViewModel.Commands
         public void Execute(object parameter)
         {
             CheckBox checkBox = (CheckBox)parameter;
-            if(checkBox.IsChecked == true)
-            {
-                //MessageBox.Show("O");
+            TextBlock textBlock = (TextBlock)checkBox.Content;
 
-                //체크O - 컬랙션에 넣기
-                VM.AddData(checkBox.Content.ToString());
+            String cb = textBlock.Text.ToString();
+
+            if (checkBox.IsChecked == true)
+            {
+                //체크O - 컬랙션에 넣기               
+                VM.AddData(cb);
             }
             else
             {
-                //MessageBox.Show("X");
-
                 //체크X - 컬랙션에서 제거
-                VM.DeleteData(checkBox.Content.ToString());
+                VM.DeleteData(cb);
 
 
             }
             //Listview클릭했을 때
-            String cb = checkBox.Content.ToString();
-
             VM.ViewData(cb);
         }
     }

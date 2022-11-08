@@ -87,11 +87,14 @@
                     <RowDefinition Height="4*"/>
                 </Grid.RowDefinitions>
 
-                <ListView x:Name="XmlNameListBox" Grid.Row="0" 
+                <ListBox x:Name="XmlNameListBox" Grid.Row="0" 
                           ItemsSource="{Binding Source={StaticResource vm}, Path=XmlFileNameList, Mode=OneWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}">
-                    <ListView.ItemTemplate>
+                    <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <CheckBox Name="CB" Content="{Binding}" Command="{Binding Source={StaticResource vm}, Path=IsCheckedCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}">
+                            <CheckBox Name="CB"  Command="{Binding Source={StaticResource vm}, Path=IsCheckedCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}">
+                                <CheckBox.Content>
+                                    <TextBlock Text="{Binding}"></TextBlock>
+                                </CheckBox.Content>
                                 <CheckBox.ContextMenu>
                                     <ContextMenu StaysOpen="true">
                                         <MenuItem Header="내보내기" Command="{Binding Source={StaticResource vm}, Path=WriteXmlCommand}" CommandParameter="{Binding}"/>
@@ -99,8 +102,8 @@
                                 </CheckBox.ContextMenu>
                             </CheckBox>
                         </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
+                    </ListBox.ItemTemplate>
+                </ListBox>
 
                 <GridSplitter Grid.Row="1" Background="LightGray" Height="5" HorizontalAlignment="Stretch" VerticalAlignment="Center" ShowsPreview="True"/>
 
