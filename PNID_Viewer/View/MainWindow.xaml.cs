@@ -14,7 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using PNID_Viewer.Model;
+using System.Windows.Resources;
 
 namespace PNID_Viewer
 {
@@ -26,12 +26,14 @@ namespace PNID_Viewer
         public MainWindow()
         {
             InitializeComponent();
+
         }
 
         private void XmlContentsDataGrid_TargetUpdated(object sender, DataTransferEventArgs e)
         {
             DataGrid dataGrid = (DataGrid)sender;
             dataGrid.ScrollIntoView(dataGrid.SelectedItem);
+         
         }
 
         //private void ChangeFocusToSelected(object sender, SelectionChangedEventArgs e)

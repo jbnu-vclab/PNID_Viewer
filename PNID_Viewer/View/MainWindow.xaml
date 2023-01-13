@@ -16,7 +16,17 @@
     <Window.Resources>
         <command:OpenImageCommand x:Key="OpenImage"/>
         <vm:ViewerVM x:Key="vm"/>
+        <Style TargetType="DataGridCell">
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="AntiqueWhite"/>
+                    <Setter Property="Foreground" Value="Black" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </Window.Resources>
+
+
     <Window.DataContext>
         <vm:ViewerVM/>
     </Window.DataContext>
@@ -45,7 +55,7 @@
                 <ItemsControl DataContext="{Binding Source={StaticResource vm}}" ItemsSource="{Binding Path=CheckedXmlDatas, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True, UpdateSourceTrigger=PropertyChanged}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <Canvas Height="7016" Width="9933" >
+                            <Canvas Height="7016" Width="9933" Cursor="Cross">
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="MouseLeftButtonDown">
                                         <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnMouseLeftButtonDownCommand" />
