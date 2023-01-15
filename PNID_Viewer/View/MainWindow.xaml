@@ -74,14 +74,15 @@
 
                     <ItemsControl.ItemContainerStyle>
                         <Style TargetType="ContentPresenter">
-                            <Setter Property="Canvas.Left" Value="{Binding Xmin}"/>
-                            <Setter Property="Canvas.Top" Value="{Binding Ymin}"/>
+                            <Setter Property="Canvas.Left" Value="{Binding X1}"/>
+                            <Setter Property="Canvas.Top" Value="{Binding Y1}"/>
                         </Style>
                     </ItemsControl.ItemContainerStyle>
 
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Rectangle Width="{Binding RectangleWidth}" Height="{Binding RectangleHeight}" Stroke="{Binding Color}" StrokeThickness="3" />
+                            <Polygon  Stroke="{Binding Color}" StrokeThickness="3">
+                            </Polygon>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                     
@@ -126,10 +127,14 @@
 
                     <DataGrid.Columns>
                         <DataGridTextColumn MinWidth="10" Width="Auto" Header="Degree" Binding="{Binding Degree}"/>
-                        <DataGridTextColumn MinWidth="10" Width="Auto" Header="Xmin" Binding="{Binding Xmin}"/>
-                        <DataGridTextColumn MinWidth="10" Width="Auto" Header="Ymin" Binding="{Binding Ymin}"/>
-                        <DataGridTextColumn MinWidth="10" Width="Auto" Header="Xmax" Binding="{Binding Xmax}"/>
-                        <DataGridTextColumn MinWidth="10" Width="Auto" Header="Ymax" Binding="{Binding Ymax}"/>
+                        <DataGridTextColumn MinWidth="10" Width="Auto" Header="Xmin" Binding="{Binding X1}"/>
+                        <DataGridTextColumn MinWidth="10" Width="Auto" Header="Ymin" Binding="{Binding Y1}"/>
+                        <DataGridTextColumn MinWidth="10" Width="Auto" Header="Xmin" Binding="{Binding X2}"/>
+                        <DataGridTextColumn MinWidth="10" Width="Auto" Header="Ymin" Binding="{Binding Y2}"/>
+                        <DataGridTextColumn MinWidth="10" Width="Auto" Header="Xmin" Binding="{Binding X3}"/>
+                        <DataGridTextColumn MinWidth="10" Width="Auto" Header="Ymin" Binding="{Binding Y3}"/>
+                        <DataGridTextColumn MinWidth="10" Width="Auto" Header="Xmin" Binding="{Binding X4}"/>
+                        <DataGridTextColumn MinWidth="10" Width="Auto" Header="Ymin" Binding="{Binding Y4}"/>
                         <DataGridTextColumn MinWidth="10" Width="Auto" Header="Flip" Binding="{Binding Flip}"/>
                         <DataGridTextColumn MinWidth="10" Width="Auto" Header="Type" Binding="{Binding Type}"/>
                         <DataGridTextColumn MinWidth="10" Width="Auto" Header="Class" Binding="{Binding Class}"/>

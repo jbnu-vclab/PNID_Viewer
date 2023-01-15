@@ -54,41 +54,67 @@ namespace PNID_Viewer.Model
             set { xmin = value; OnPropertyChanged(nameof(Xmin)); }
         }
 
-        private int ymin;
-        public int Ymin
+        private int x1;
+
+        public int X1
         {
-            get { return ymin; }
-            set { ymin = value; OnPropertyChanged(nameof(Ymin)); }
+            get { return x1; }
+            set { x1 = value; OnPropertyChanged(nameof(X1)); }
         }
 
-        private int xmax;
-        public int Xmax
+        private int y1;
+
+        public int Y1
         {
-            get { return xmax; }
-            set { xmax = value; OnPropertyChanged(nameof(Xmax)); }
+            get { return y1; }
+            set { y1 = value; OnPropertyChanged(nameof(Y1)); }
         }
 
-        private int ymax;
-        public int Ymax
+        private int x2;
+
+        public int X2
         {
-            get { return ymax; }
-            set { ymax = value; OnPropertyChanged(nameof(Ymax)); }
+            get { return x2; }
+            set { x2 = value; OnPropertyChanged(nameof(X2)); }
         }
 
-        private int rectangleWidth;
+        private int y2;
 
-        public int RectangleWidth
+        public int Y2
         {
-            get { return rectangleWidth; }
-            set { rectangleWidth = value; OnPropertyChanged(nameof(RectangleWidth)); }
+            get { return y2; }
+            set { y2 = value; OnPropertyChanged(nameof(Y2)); }
+        }
+        private int x3;
+
+        public int X3
+        {
+            get { return x3; }
+            set { x3 = value; OnPropertyChanged(nameof(X3)); }
         }
 
-        private int rectangleHeight;
+        private int y3;
 
-        public int RectangleHeight
+        public int Y3
         {
-            get { return rectangleHeight; }
-            set { rectangleHeight = value; OnPropertyChanged(nameof(RectangleHeight)); }
+            get { return y3; }
+            set { y3 = value; OnPropertyChanged(nameof(Y3)); }
+        }
+
+        private int x4;
+
+        public int X4
+        {
+            get { return x4; }
+            set { x4 = value; OnPropertyChanged(nameof(X4)); }
+        }
+
+        private int y4;
+
+        public int Y4
+        {
+            get { return y4; }
+            set { y4 = value; OnPropertyChanged(nameof(Y4)); }
         }
 
         private string color;
@@ -106,20 +132,6 @@ namespace PNID_Viewer.Model
             if (PropertyChanged != null)
             {
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-                //질문 : 요소가 변화했을 때 
-                if(propertyName.Equals("Xmin") || propertyName.Equals("Ymin") || 
-                    propertyName.Equals("Xmax") || propertyName.Equals("Ymax"))
-                {
-                    if(Xmax > Xmin)
-                        RectangleWidth = Xmax - Xmin;
-                    else
-                        RectangleWidth = Xmin - Xmax;
-
-                    if(Ymax > Ymin)
-                        RectangleHeight = Ymax - Ymin;
-                    else
-                        RectangleHeight = Ymin - Ymax;
-                }
             }
         }
     }

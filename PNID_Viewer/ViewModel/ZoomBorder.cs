@@ -99,8 +99,8 @@ namespace PNID_Viewer.ViewModel
                 return;
 
             XmlModel selectedData = ViewXmlReference[SelectedItemIndex];
-            int midX = (int)((selectedData.Xmin + selectedData.Xmax) / 2.0f);
-            int midY = (int)((selectedData.Ymin + selectedData.Ymax) / 2.0f);
+            int midX = (int)((selectedData.X1 + selectedData.X3) / 2.0f);
+            int midY = (int)((selectedData.Y1 + selectedData.Y3) / 2.0f);
 
             // (Note)Image에 대한 Render Transform이기 때문에, X,Y 값이 증가하면 이미지가 우측 아래로 이동
             var tt = GetTranslateTransform(child);
@@ -204,6 +204,34 @@ namespace PNID_Viewer.ViewModel
             return converted;
         }
 
+        static double Max(double a, double b, double c)
+        {
+            double[] x = { a, b, c };
+            double max = a;		
+
+            for (int i = 1; i < x.Length; i++)
+            {
+                if (max < x[i])	
+                    max = x[i];
+            }
+
+            return max;	
+        }
+
+        static double Min(double a, double b, double c)
+        {
+            double[] x = { a, b, c };
+            double min = a;
+
+            for (int i = 1; i < x.Length; i++)
+            {
+                if (min > x[i])
+                    min = x[i];	
+            }
+
+            return min;	
+        }
+
         private void child_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             if (child != null && !Keyboard.IsKeyDown(Key.LeftCtrl))
@@ -223,8 +251,8 @@ namespace PNID_Viewer.ViewModel
                     for(int i=0; i<ViewXmlReference.Count;i++)
                     {
                         XmlModel item = ViewXmlReference[i];
-                        if(clickImageCoord.X > item.Xmin && clickImageCoord.X < item.Xmax &&
-                            clickImageCoord.Y > item.Ymin && clickImageCoord.Y < item.Ymax)
+                        if(clickImageCoord.X > Min(item.X1, item.X2, item.X4) && clickImageCoord.X < Max(item.X2, item.X3, item.X4) &&
+                            clickImageCoord.Y > Min(item.Y1, item.Y3, item.Y4) && clickImageCoord.Y < Max(item.Y1, item.Y2, item.Y3))
                         {
                             // 박스 안에 포함된 좌표라면 SelectedBox에 저장하고 종료
                             SelectedItemIndex = i;

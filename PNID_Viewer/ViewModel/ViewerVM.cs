@@ -54,8 +54,8 @@ namespace PNID_Viewer.ViewModel
             WriteXmlCommand = new WriteXmlCommand(this);
             IsCheckedCommand = new IsCheckedCommand(this);
 
-            this.MouseLeftButtonDown += OnMouseLeftButtonDownCommand;
-            this.MouseMove += OnMouseMoveCommand;
+            //this.MouseLeftButtonDown += OnMouseLeftButtonDownCommand;
+            //this.MouseMove += OnMouseMoveCommand;
             this.ViewXmlDatas.CollectionChanged += this.OnCollectionChanged;
         }
 
@@ -69,73 +69,72 @@ namespace PNID_Viewer.ViewModel
             }
         }
 
-        Point start;       //Box의 시작점을 저장
-        Point end;         //Box의 끝점을 저장
-        bool IsMouseRightButtonDown = false;    //시작점이 찍혔는지 확인하는 변수
+        //Point start;       //Box의 시작점을 저장
+        //Point end;         //Box의 끝점을 저장
+        //bool IsMouseRightButtonDown = false;    //시작점이 찍혔는지 확인하는 변수
 
         //Ctrl + 마우스 좌클릭
-        public void OnMouseLeftButtonDownCommand(object sender, MouseButtonEventArgs e)
-        {
-            //시작점을 찍을 때
-            if (Keyboard.IsKeyDown(Key.LeftCtrl) && IsMouseRightButtonDown == false)
-            {
-                XmlModel temp = new XmlModel();
-                start = e.GetPosition((IInputElement)sender);
-                temp.Color = "Blue";
-                CheckedXmlDatas.Insert(0, temp);
-                XmlDatas.Insert(0, temp);
-                IsMouseRightButtonDown = true;
-            }
-            //끝점을 찍을 때
-            else if (Keyboard.IsKeyDown(Key.LeftCtrl) && IsMouseRightButtonDown == true)
-            {
-                end = e.GetPosition((IInputElement)sender);
-                XmlModel temp = new XmlModel();
-                temp.XmlFilename = ViewXmlDatas[0].XmlFilename;
-                if(ViewXmlDatas[1].Color == "Blue")
-                    temp.Color = ViewXmlDatas[2].Color;
-                else
-                    temp.Color = ViewXmlDatas[1].Color;
-                temp.Xmax = Math.Max((int)start.X, (int)end.X);
-                temp.Xmin = Math.Min((int)start.X, (int)end.X);
-                temp.Ymax = Math.Max((int)start.Y, (int)end.Y);
-                temp.Ymin = Math.Min((int)start.Y, (int)end.Y);
+        //public void OnMouseLeftButtonDownCommand(object sender, MouseButtonEventArgs e)
+        //{
+        //    //시작점을 찍을 때
+        //    if (Keyboard.IsKeyDown(Key.LeftCtrl) && IsMouseRightButtonDown == false)
+        //    {
+        //        XmlModel temp = new XmlModel();
+        //        start = e.GetPosition((IInputElement)sender);
+        //        temp.Color = "Blue";
+        //        CheckedXmlDatas.Insert(0, temp);
+        //        XmlDatas.Insert(0, temp);
+        //        IsMouseRightButtonDown = true;
+        //    }
+        //    //끝점을 찍을 때
+        //    else if (Keyboard.IsKeyDown(Key.LeftCtrl) && IsMouseRightButtonDown == true)
+        //    {
+        //        end = e.GetPosition((IInputElement)sender);
+        //        XmlModel temp = new XmlModel();
+        //        temp.XmlFilename = ViewXmlDatas[0].XmlFilename;
+        //        if(ViewXmlDatas[1].Color == "Blue")
+        //            temp.Color = ViewXmlDatas[2].Color;
+        //        else
+        //            temp.Color = ViewXmlDatas[1].Color;
+        //        temp.Xmax = Math.Max((int)start.X, (int)end.X);
+        //        temp.Xmin = Math.Min((int)start.X, (int)end.X);
+        //        temp.Ymax = Math.Max((int)start.Y, (int)end.Y);
+        //        temp.Ymin = Math.Min((int)start.Y, (int)end.Y);
 
-                temp.RectangleWidth = temp.Xmax - temp.Xmin;
-                temp.RectangleHeight = temp.Ymax - temp.Ymin;
-                XmlDatas[0] = temp;
-                CheckedXmlDatas[0] = temp;
-                ViewXmlDatas.Insert(0, temp);
-                IsMouseRightButtonDown = false;
-            }
-
-        }
+        //        temp.RectangleWidth = temp.Xmax - temp.Xmin;
+        //        temp.RectangleHeight = temp.Ymax - temp.Ymin;
+        //        XmlDatas[0] = temp;
+        //        CheckedXmlDatas[0] = temp;
+        //        ViewXmlDatas.Insert(0, temp);
+        //        IsMouseRightButtonDown = false;
+        //    }
+        //}
 
 
         //Box의 시작점이 찍히고 마우스가 움직일 때
-        public void OnMouseMoveCommand(object sender, MouseEventArgs e)
-        {
-            if (IsMouseRightButtonDown == true && Keyboard.IsKeyDown(Key.LeftCtrl)) //시작점이 찍혔을 때만
-            {
-                end = e.GetPosition((IInputElement)sender);
+        //public void OnMouseMoveCommand(object sender, MouseEventArgs e)
+        //{
+        //    if (IsMouseRightButtonDown == true && Keyboard.IsKeyDown(Key.LeftCtrl)) //시작점이 찍혔을 때만
+        //    {
+        //        end = e.GetPosition((IInputElement)sender);
 
-                XmlModel temp = new XmlModel();
-                temp.XmlFilename = ViewXmlDatas[0].XmlFilename;
-                temp.Color = ViewXmlDatas[0].Color;
+        //        XmlModel temp = new XmlModel();
+        //        temp.XmlFilename = ViewXmlDatas[0].XmlFilename;
+        //        temp.Color = ViewXmlDatas[0].Color;
 
-                temp.Xmax = Math.Max((int)start.X, (int)end.X);
-                temp.Xmin = Math.Min((int)start.X, (int)end.X);
-                temp.Ymax = Math.Max((int)start.Y, (int)end.Y);
-                temp.Ymin = Math.Min((int)start.Y, (int)end.Y);
+        //        temp.Xmax = Math.Max((int)start.X, (int)end.X);
+        //        temp.Xmin = Math.Min((int)start.X, (int)end.X);
+        //        temp.Ymax = Math.Max((int)start.Y, (int)end.Y);
+        //        temp.Ymin = Math.Min((int)start.Y, (int)end.Y);
 
-                temp.RectangleWidth = temp.Xmax - temp.Xmin;
-                temp.RectangleHeight = temp.Ymax - temp.Ymin;
+        //        temp.RectangleWidth = temp.Xmax - temp.Xmin;
+        //        temp.RectangleHeight = temp.Ymax - temp.Ymin;
 
-                CheckedXmlDatas[0] = temp;
+        //        CheckedXmlDatas[0] = temp;
 
-                XmlDatas[0] = temp;
-            }
-        }
+        //        XmlDatas[0] = temp;
+        //    }
+        //}
 
         //ViewXmlCommand에서 사용
         public void ViewData(string _XmlFileName)
@@ -279,27 +278,35 @@ namespace PNID_Viewer.ViewModel
                                 XmlModel.Class = reader.ReadString();
                                 XmlModel.XmlFilename = FindNameToXmlPath(FilePathModel.XmlPath);
                                 break;
+                            case "x1":
+                                XmlModel.X1 = Convert.ToInt32(reader.ReadString());
+                                break;
+                            case "y1":
+                                XmlModel.Y1 = Convert.ToInt32(reader.ReadString());
+                                break;
+                            case "x2":
+                                XmlModel.X2 = Convert.ToInt32(reader.ReadString());
+                                break;
+                            case "y2":
+                                XmlModel.Y2 = Convert.ToInt32(reader.ReadString());
+                                break;
+                            case "x3":
+                                XmlModel.X3 = Convert.ToInt32(reader.ReadString());
+                                break;
+                            case "y3":
+                                XmlModel.Y3 = Convert.ToInt32(reader.ReadString());
+                                break;
+                            case "x4":
+                                XmlModel.X4 = Convert.ToInt32(reader.ReadString());
+                                break;
+                            case "y4":
+                                XmlModel.Y4 = Convert.ToInt32(reader.ReadString());
+                                break;
                             case "degree":
                                 XmlModel.Degree = Convert.ToDouble(reader.ReadString());
                                 break;
-                            case "xmin":
-                                double s = reader.ReadElementContentAsDouble();
-                                XmlModel.Xmin = Convert.ToInt32(s);
-                                break;
-                            case "ymin":
-                                XmlModel.Ymin = Convert.ToInt32(reader.ReadString());
-                                break;
-                            case "xmax":
-                                XmlModel.Xmax = Convert.ToInt32(reader.ReadString());
-                                break;
-                            case "ymax":
-                                XmlModel.Ymax = Convert.ToInt32(reader.ReadString());
-                                break;
                             case "flip":
                                 XmlModel.Flip = reader.ReadString();
-
-                                XmlModel.RectangleWidth = XmlModel.Xmax - XmlModel.Xmin;
-                                XmlModel.RectangleHeight = XmlModel.Ymax - XmlModel.Ymin;
 
                                 XmlModel temp = new XmlModel();
                                 temp.XmlFilename = XmlModel.XmlFilename;
@@ -307,12 +314,15 @@ namespace PNID_Viewer.ViewModel
                                 temp.Class = XmlModel.Class;
                                 temp.Flip = XmlModel.Flip;
                                 temp.Degree = XmlModel.Degree;
-                                temp.Xmin = XmlModel.Xmin;
-                                temp.Ymin = XmlModel.Ymin;
-                                temp.Xmax = XmlModel.Xmax;
-                                temp.Ymax = XmlModel.Ymax;
-                                temp.RectangleWidth = XmlModel.RectangleWidth;
-                                temp.RectangleHeight = XmlModel.RectangleHeight;
+                                temp.X1 = XmlModel.X1;
+                                temp.Y1 = XmlModel.Y1;
+                                temp.X2 = XmlModel.X2;
+                                temp.Y2 = XmlModel.Y2;
+                                temp.X3 = XmlModel.X3;
+                                temp.Y3 = XmlModel.Y3;
+                                temp.X4 = XmlModel.X4;
+                                temp.Y4 = XmlModel.Y4;
+
                                 temp.Color = colorinfo;
                                 XmlDatas.Add(temp);
 
@@ -363,10 +373,14 @@ namespace PNID_Viewer.ViewModel
                         wr.WriteElementString("type", item.Type);
                         wr.WriteElementString("class", item.Class);
                         wr.WriteStartElement("bndbox");
-                        wr.WriteElementString("xmin", item.Xmin.ToString());
-                        wr.WriteElementString("ymin", item.Ymin.ToString());
-                        wr.WriteElementString("xmax", item.Xmax.ToString());
-                        wr.WriteElementString("ymax", item.Ymax.ToString());
+                        wr.WriteElementString("x1", item.X1.ToString());
+                        wr.WriteElementString("y1", item.Y1.ToString());
+                        wr.WriteElementString("x2", item.X2.ToString());
+                        wr.WriteElementString("y2", item.Y2.ToString());
+                        wr.WriteElementString("x3", item.X3.ToString());
+                        wr.WriteElementString("y3", item.Y3.ToString());
+                        wr.WriteElementString("x4", item.X4.ToString());
+                        wr.WriteElementString("y4", item.Y4.ToString());
                         wr.WriteEndElement();  //bndbox
                         wr.WriteElementString("degree", item.Degree.ToString());
                         wr.WriteElementString("flip", item.Flip);
