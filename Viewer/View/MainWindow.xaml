@@ -1,0 +1,173 @@
+﻿<Window x:Class="Viewer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        xmlns:Command="http://www.galasoft.ch/mvvmlight"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Viewer"
+        xmlns:viewModal="clr-namespace:Viewer.ViewModel"
+        xmlns:utilities="clr-namespace:Viewer.ViewModel.Utilities"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="700" Width="1000">
+    <Window.Resources>
+        <viewModal:ViewerVM x:Key="vm"/>
+
+        <Style TargetType="DataGridCell">
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="AntiqueWhite"/>
+                    <Setter Property="Foreground" Value="Black" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    
+    <Grid DataContext="{StaticResource vm}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Menu Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Top">
+            <MenuItem Header="Open">
+                <MenuItem Header="Xml" Command="{Binding OpenXmlCommand}"/>
+                <MenuItem Header="Image" Command="{Binding OpenImageCommand}"/>
+            </MenuItem>
+        </Menu>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1.5*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <utilities:ZoomBorder Grid.Row="1" x:Name="border" ClipToBounds="True" Background="Gray"
+                                      ViewXmlReference="{Binding CurrentXmlDatasInCanvas}">
+                    <Grid>
+                        <Canvas Width="{Binding CurrentImageInCanvas.BackgroundImage.PixelWidth}" 
+                            Height="{Binding CurrentImageInCanvas.BackgroundImage.PixelHeight}"
+                            Cursor="Cross" Name="canvas1">
+                            <!-- Canvas 배경으로 이미지 설정 -->
+                            <Canvas.Background>
+                                <ImageBrush ImageSource="{Binding CurrentImageInCanvas.BackgroundImage}"/>
+                            </Canvas.Background>
+
+                            <!-- 아이템들을 Canvas 자식 요소로 추가 -->
+                            <ItemsControl ItemsSource="{Binding CurrentXmlDatasInCanvas}">
+                                <ItemsControl.ItemContainerStyle>
+                                    <Style>
+                                        <!-- Canvas.Left와 Canvas.Top으로 아이템의 위치를 지정 -->
+                                        <Setter Property="Canvas.Left" Value="{Binding Xmin}" />
+                                        <Setter Property="Canvas.Top" Value="{Binding Ymin}" />
+                                        <Setter Property="Canvas.RenderTransform">
+                                            <Setter.Value>
+                                                <RotateTransform Angle="{Binding Degree}" CenterX="{Binding CenterX}" CenterY="{Binding CenterY}"/>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </ItemsControl.ItemContainerStyle>
+                                <ItemsControl.ItemsPanel>
+                                    <!-- ItemsPanel로 Canvas를 사용 -->
+                                    <ItemsPanelTemplate>
+                                        <Canvas />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Rectangle Width="{Binding Width}" Height="{Binding Height}" Stroke="{Binding Color}" StrokeThickness="{Binding _Stroke}" />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                        </Canvas>
+                    </Grid>
+
+
+                </utilities:ZoomBorder>
+            </Grid>
+
+            <GridSplitter Grid.Column="1" Background="LightGray" Width="5" HorizontalAlignment="Center" VerticalAlignment="Stretch" ShowsPreview="True"/>
+            <Grid Grid.Column="2" Margin="4.6,0,-0.4,-0.2" VerticalAlignment="Stretch">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="3.5*"/>
+                </Grid.RowDefinitions>
+
+                <TabControl>
+                    <!-- 첫 번째 탭 -->
+                    <TabItem Header="Xml List">
+                        <ListView ItemsSource="{Binding XmlLists}" 
+                                  SelectedItem="{Binding SelectedXmlListItem}">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Rectangle Grid.Column="0" Fill="{Binding Color}" Width="15" Height="15"/>
+                                        <CheckBox Grid.Column="1"  Margin="6,0,0,0"
+                                                  Content="{Binding XmlName}"
+                                                  Command="{Binding Source={StaticResource vm}, Path=IsCheckCommand}" 
+                                                  CommandParameter="{Binding RelativeSource={RelativeSource Self}}">
+                                            <CheckBox.ContextMenu>
+                                                <ContextMenu StaysOpen="True">
+                                                    <MenuItem Header="내보내기" Command="{Binding Source={StaticResource vm}, Path=SaveDataToXmlCommand}" CommandParameter="{Binding}"/>
+                                                </ContextMenu>
+                                            </CheckBox.ContextMenu>
+                                        </CheckBox>
+                                        
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </TabItem>
+
+                    <!-- 두 번째 탭 -->
+                    <TabItem Header="Image List">
+                        <ListView ItemsSource="{Binding ImageList}" SelectionMode="Single"
+                                  SelectedItem="{Binding SelectedImageListItem}">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding ImageName}" Margin="6,0,0,0" />
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </TabItem>
+                </TabControl>
+
+                <GridSplitter Grid.Row="1" Background="LightGray" Height="5" HorizontalAlignment="Stretch" VerticalAlignment="Center" ShowsPreview="True" Margin="5"/>
+                <TabControl Grid.Row="2" >
+                    <TabItem Header="{Binding CurrentXmlDatasInDatagrid[0].XmlName}">
+                        <DataGrid x:Name="XmlContentsDataGrid" 
+                          ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" AutoGenerateColumns="False" 
+                          ItemsSource="{Binding CurrentXmlDatasInDatagrid, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
+                          CanUserAddRows="True" CanUserDeleteRows="True" IsReadOnly="False" CanUserSortColumns="False"
+                                  SelectedIndex="{Binding ElementName=border, Path=SelectedItemIndex, Mode=TwoWay, NotifyOnTargetUpdated=True}"
+                          TargetUpdated="XmlContentsDataGrid_TargetUpdated">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="CellEditEnding">
+                                    <Command:EventToCommand Command="{Binding CellEditEndingCommand}"
+                                    PassEventArgsToCommand="True" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                            <DataGrid.Columns>
+                                <DataGridTextColumn MinWidth="10" Width="Auto" Header="Xmin" Binding="{Binding Xmin, UpdateSourceTrigger=PropertyChanged}"/>
+                                <DataGridTextColumn MinWidth="10" Width="Auto" Header="Ymin" Binding="{Binding Ymin, UpdateSourceTrigger=PropertyChanged}"/>
+                                    <DataGridTextColumn MinWidth="10" Width="Auto" Header="Xmax" Binding="{Binding Xmax, UpdateSourceTrigger=PropertyChanged}"/>
+                                    <DataGridTextColumn MinWidth="10" Width="Auto" Header="Ymax" Binding="{Binding Ymax, UpdateSourceTrigger=PropertyChanged}"/>
+                                    <DataGridTextColumn MinWidth="10" Width="Auto" Header="Degree" Binding="{Binding Degree, UpdateSourceTrigger=PropertyChanged}"/>
+                                    <DataGridTextColumn MinWidth="10" Width="Auto" Header="Class" Binding="{Binding _Class, UpdateSourceTrigger=PropertyChanged}"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </TabItem>
+                </TabControl>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>
