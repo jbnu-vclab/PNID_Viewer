@@ -96,6 +96,8 @@ namespace Viewer.ViewModel
 
             // Event Handler
             CurrentXmlDatasInDatagrid.CollectionChanged += CurrentXmlDatasInDatagrid_CollectionChanged;
+            // 마우스 클릭시에 좌표를 전달받음
+            Messenger.Subscribe("MouseClickMessage", ExecuteMouseClick);
         }
 
         // Datagrid - 셀 수정
@@ -187,7 +189,7 @@ namespace Viewer.ViewModel
                 {
                     CurrentXmlDatasInCanvas.Add(xmlData);
                 }
-                
+
             }
             else
             {
@@ -202,7 +204,7 @@ namespace Viewer.ViewModel
         private void SaveXml(object parameter)
         {
             XmlList xmlList = parameter as XmlList;
-            ObservableCollection<XmlModel> temp =  ModifyDatas.Add_FindXmlDataByName(xmlList.XmlName, AllXmlDatas);
+            ObservableCollection<XmlModel> temp = ModifyDatas.Add_FindXmlDataByName(xmlList.XmlName, AllXmlDatas);
             SaveDataToXml.WriteXml(temp);
         }
 
@@ -210,7 +212,7 @@ namespace Viewer.ViewModel
         private void OpenImage(object parameter)
         {
             string imagePath = fileLoader.LoadImageFile();
-            
+
             if (string.IsNullOrEmpty(imagePath))
                 return;
 
@@ -251,8 +253,73 @@ namespace Viewer.ViewModel
 
             AllXmlDatas = ModifyDatas.AddAToB(CurrentXmlDatasInDatagrid, AllXmlDatas);
 
-            XmlLists.Add(new XmlList { XmlName = parsedData[0].XmlName, Color = parsedData[0].Color, IsChecked = true});
+            XmlLists.Add(new XmlList { XmlName = parsedData[0].XmlName, Color = parsedData[0].Color, IsChecked = true });
 
+        }
+
+
+
+        // 마우스 좌표 전달 받아서 수행
+        // 첫번째 클릭시 좌표 저장
+        // 두번째 클릭시 좌표 저장 + xmlData변환후 그리기 + 그리드에 저장
+        bool isSecondClick = false;
+        double X1, X2;
+        double Y1, Y2;
+        private void ExecuteMouseClick(object parameter)
+        {
+            bool isShiftKeyPressed = Keyboard.IsKeyDown(Key.LeftCtrl);
+
+            if (isShiftKeyPressed)
+            {
+                Point mousePosition = (Point)parameter;
+
+                // 첫번째 클릭
+                if (isSecondClick == false)
+                {
+                    X1 = mousePosition.X;
+                    Y1 = mousePosition.Y;
+                    isSecondClick = true;
+                }
+                // 두번째 클릭
+                else
+                {
+                    X2 = mousePosition.X;
+                    Y2 = mousePosition.Y;
+
+                    Add2CurrentXml(X1, Y1, X2, Y2);
+
+                    isSecondClick = false;
+                }
+            }
+        }
+
+        // xmlData 변환 및 그리기, 그리드에 저장
+        private void Add2CurrentXml(double X1, double Y1, double X2, double Y2)
+        {
+            XmlModel xmlModel = new XmlModel();
+            var tmp = CurrentXmlDatasInDatagrid[0];
+
+            xmlModel.Xmin = (int)Math.Min(X1, X2);
+            xmlModel.Xmax = (int)Math.Max(X1, X2);
+            xmlModel.Ymin = (int)Math.Min(Y1, Y2);
+            xmlModel.Ymax = (int)Math.Max(Y1, Y2);
+            xmlModel.XmlName = tmp.XmlName;
+            xmlModel.Type = tmp.Type;
+            // xmlModel._Class = tmp._Class;
+            xmlModel._Class = "testing 12029033290";
+            xmlModel.Degree = tmp.Degree;
+            xmlModel.Flip = tmp.Flip;
+            xmlModel.Color = tmp.Color;
+            xmlModel.Width = (int)Math.Abs(X1 - X2);
+            xmlModel.Height = (int)Math.Abs(Y1 - Y2);
+            xmlModel.CenterX = xmlModel.Width / 2;
+            xmlModel.CenterY = xmlModel.Height / 2;
+            xmlModel._Stroke = 4;
+
+            CurrentXmlDatasInCanvas.Add(xmlModel);
+            CurrentXmlDatasInDatagrid.Add(xmlModel);
+
+            // MessageBox.Show("1");
         }
 
     }

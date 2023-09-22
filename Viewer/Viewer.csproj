@@ -85,6 +85,7 @@
     <Compile Include="ViewModel\Commands\RelayCommand.cs" />
     <Compile Include="ViewModel\Utilities\FileLoader.cs" />
     <Compile Include="ViewModel\Utilities\IsSelected.cs" />
+    <Compile Include="ViewModel\Utilities\Messenger.cs" />
     <Compile Include="ViewModel\Utilities\ModifyDatas.cs" />
     <Compile Include="ViewModel\Utilities\SaveDataToXml.cs" />
     <Compile Include="ViewModel\Utilities\zoomBorder.cs" />

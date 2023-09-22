@@ -180,14 +180,19 @@ namespace Viewer.ViewModel.Utilities
 
         private void child_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (child != null)
+            if (!Keyboard.IsKeyDown(Key.LeftCtrl))
             {
-                var tt = GetTranslateTransform(child);
-                start = e.GetPosition(this);
-                origin = new Point(tt.X, tt.Y);
-                this.Cursor = Cursors.Hand;
-                child.CaptureMouse();
+
+                if (child != null)
+                {
+                    var tt = GetTranslateTransform(child);
+                    start = e.GetPosition(this);
+                    origin = new Point(tt.X, tt.Y);
+                    this.Cursor = Cursors.Hand;
+                    child.CaptureMouse();
+                }
             }
+
         }
         private void child_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {

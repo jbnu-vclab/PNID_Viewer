@@ -22,7 +22,7 @@
             </Style.Triggers>
         </Style>
     </Window.Resources>
-    
+
     <Grid DataContext="{StaticResource vm}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -50,7 +50,8 @@
                     <Grid>
                         <Canvas Width="{Binding CurrentImageInCanvas.BackgroundImage.PixelWidth}" 
                             Height="{Binding CurrentImageInCanvas.BackgroundImage.PixelHeight}"
-                            Cursor="Cross" Name="canvas1">
+                            Cursor="Cross" Name="canvas1"
+                            MouseLeftButtonDown="Canvas1_MouseLeftButtonDown">
                             <!-- Canvas 배경으로 이미지 설정 -->
                             <Canvas.Background>
                                 <ImageBrush ImageSource="{Binding CurrentImageInCanvas.BackgroundImage}"/>
@@ -121,7 +122,7 @@
                                                 </ContextMenu>
                                             </CheckBox.ContextMenu>
                                         </CheckBox>
-                                        
+
                                     </Grid>
                                 </DataTemplate>
                             </ListView.ItemTemplate>
@@ -159,10 +160,10 @@
                             <DataGrid.Columns>
                                 <DataGridTextColumn MinWidth="10" Width="Auto" Header="Xmin" Binding="{Binding Xmin, UpdateSourceTrigger=PropertyChanged}"/>
                                 <DataGridTextColumn MinWidth="10" Width="Auto" Header="Ymin" Binding="{Binding Ymin, UpdateSourceTrigger=PropertyChanged}"/>
-                                    <DataGridTextColumn MinWidth="10" Width="Auto" Header="Xmax" Binding="{Binding Xmax, UpdateSourceTrigger=PropertyChanged}"/>
-                                    <DataGridTextColumn MinWidth="10" Width="Auto" Header="Ymax" Binding="{Binding Ymax, UpdateSourceTrigger=PropertyChanged}"/>
-                                    <DataGridTextColumn MinWidth="10" Width="Auto" Header="Degree" Binding="{Binding Degree, UpdateSourceTrigger=PropertyChanged}"/>
-                                    <DataGridTextColumn MinWidth="10" Width="Auto" Header="Class" Binding="{Binding _Class, UpdateSourceTrigger=PropertyChanged}"/>
+                                <DataGridTextColumn MinWidth="10" Width="Auto" Header="Xmax" Binding="{Binding Xmax, UpdateSourceTrigger=PropertyChanged}"/>
+                                <DataGridTextColumn MinWidth="10" Width="Auto" Header="Ymax" Binding="{Binding Ymax, UpdateSourceTrigger=PropertyChanged}"/>
+                                <DataGridTextColumn MinWidth="10" Width="Auto" Header="Degree" Binding="{Binding Degree, UpdateSourceTrigger=PropertyChanged}"/>
+                                <DataGridTextColumn MinWidth="10" Width="Auto" Header="Class" Binding="{Binding _Class, UpdateSourceTrigger=PropertyChanged}"/>
                             </DataGrid.Columns>
                         </DataGrid>
                     </TabItem>

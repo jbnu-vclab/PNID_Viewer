@@ -13,6 +13,10 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using GalaSoft.MvvmLight.Messaging;
+using Viewer.ViewModel;
+
+
 namespace Viewer
 {
     /// <summary>
@@ -28,6 +32,11 @@ namespace Viewer
         {
             DataGrid dataGrid = (DataGrid)sender;
             dataGrid.ScrollIntoView(dataGrid.SelectedItem);
+        }
+        private void Canvas1_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            Point mousePosition = e.GetPosition(canvas1);
+            Viewer.ViewModel.Utilities.Messenger.Send("MouseClickMessage", mousePosition);
         }
 
     }
